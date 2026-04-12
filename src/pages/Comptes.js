@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function Clients() {
+export default function Comptes() {
   return (
     <div className="page">
       <div
@@ -33,7 +33,7 @@ export default function Clients() {
               lineHeight: 1.1,
             }}
           >
-            Clients
+            Comptes
           </h1>
           <p
             style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}
