@@ -2,56 +2,71 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+// ── Menu complet avec droits par rôle ─────────────────────
+// roles: [] = accessible à tous | ["admin"] = admin seulement etc.
 const MENU = [
   {
     id: "dashboard",
     label: "Tableau de bord",
+    roles: [], // tous
     subItems: [
-      { path: "/", label: "Vue d'ensemble" },
-      { path: "/statistiques", label: "Statistiques" },
+      { path: "/", label: "Vue d'ensemble", roles: [] },
+      { path: "/statistiques", label: "Statistiques", roles: [] },
     ],
   },
   {
     id: "boutiques",
     label: "Boutiques",
+    roles: [],
     subItems: [
-      { path: "/boutiques", label: "Liste des boutiques" },
-      { path: "/invitations", label: "Liens d'invitation" },
-      { path: "/abonnements", label: "Abonnements" },
+      { path: "/boutiques", label: "Liste des boutiques", roles: [] },
+      { path: "/invitations", label: "Liens d'invitation", roles: ["admin"] },
+      { path: "/abonnements", label: "Abonnements", roles: ["admin"] },
     ],
   },
   {
     id: "commandes",
     label: "Commandes",
+    roles: [],
     subItems: [
-      { path: "/commandes", label: "Toutes les commandes" },
-      { path: "/retours", label: "Retours" },
+      { path: "/commandes", label: "Toutes les commandes", roles: [] },
+      { path: "/retours", label: "Retours", roles: [] },
+      { path: "/livraisons", label: "Livraisons", roles: [] },
     ],
   },
   {
     id: "clients",
     label: "Clients",
-    subItems: [{ path: "/clients", label: "Liste des clients" }],
+    roles: [],
+    subItems: [{ path: "/clients", label: "Liste des clients", roles: [] }],
   },
   {
     id: "finance",
     label: "Finance",
-    subItems: [{ path: "/finance", label: "Commissions & CA" }],
+    roles: ["admin"], // SAV et Ops n'ont pas accès
+    subItems: [
+      { path: "/finance", label: "Commissions & CA", roles: ["admin"] },
+    ],
   },
   {
     id: "sav",
     label: "Support & SAV",
+    roles: [],
     subItems: [
-      { path: "/sav", label: "Tickets & litiges", badge: 3 },
-      { path: "/moderation", label: "Modération" },
+      { path: "/sav", label: "Tickets & litiges", roles: [], badge: 3 },
+      { path: "/moderation", label: "Modération", roles: [] },
+      { path: "/produits", label: "Produits", roles: [] },
     ],
   },
   {
     id: "settings",
     label: "Paramètres",
+    roles: ["admin"], // SAV et Ops n'ont pas accès
     subItems: [
-      { path: "/parametres", label: "Configuration globale" },
-      { path: "/comptes", label: "Comptes admin / SAV" },
+      { path: "/parametres", label: "Configuration globale", roles: ["admin"] },
+      { path: "/zones", label: "Zones de service", roles: ["admin"] },
+      { path: "/notifications", label: "Notifications", roles: ["admin"] },
+      { path: "/comptes", label: "Comptes admin / SAV", roles: ["admin"] },
     ],
   },
 ];
@@ -62,13 +77,30 @@ const ROLE_CONFIG = {
   ops: { label: "Ops / Modération", color: "#10B981", dot: "#10B981" },
 };
 
+// Filtre les items selon le rôle courant
+function peutAcceder(roles, role) {
+  if (!roles || roles.length === 0) return true; // accessible à tous
+  return roles.includes(role);
+}
+
 export default function Sidebar() {
   const { logout, admin } = useAuth();
   const location = useLocation();
   const [mounted, setMounted] = useState(false);
 
+  const role = admin?.role || "admin";
+  const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
+
+  // Filtrage du menu selon le rôle
+  const menuVisible = MENU.filter((g) => peutAcceder(g.roles, role))
+    .map((g) => ({
+      ...g,
+      subItems: g.subItems.filter((s) => peutAcceder(s.roles, role)),
+    }))
+    .filter((g) => g.subItems.length > 0);
+
   const getActiveGroup = () => {
-    for (const g of MENU) {
+    for (const g of menuVisible) {
       if (
         g.subItems.some(
           (s) =>
@@ -88,8 +120,12 @@ export default function Sidebar() {
     return () => clearTimeout(t);
   }, []);
 
-  const role = admin?.role || "admin";
-  const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
+  const roleRgb =
+    role === "admin"
+      ? "201,169,110"
+      : role === "sav"
+      ? "59,130,246"
+      : "16,185,129";
 
   return (
     <>
@@ -153,7 +189,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* PROFIL ADMIN */}
+        {/* PROFIL */}
         <div
           style={{
             padding: "16px 20px",
@@ -178,20 +214,8 @@ export default function Sidebar() {
                 height: "32px",
                 borderRadius: "4px",
                 flexShrink: 0,
-                background: `rgba(${
-                  role === "admin"
-                    ? "201,169,110"
-                    : role === "sav"
-                    ? "59,130,246"
-                    : "16,185,129"
-                },0.15)`,
-                border: `1px solid rgba(${
-                  role === "admin"
-                    ? "201,169,110"
-                    : role === "sav"
-                    ? "59,130,246"
-                    : "16,185,129"
-                },0.3)`,
+                background: `rgba(${roleRgb},0.15)`,
+                border: `1px solid rgba(${roleRgb},0.3)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -243,6 +267,43 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
+
+          {/* Badge rôle avec accès restreint si non-admin */}
+          {role !== "admin" && (
+            <div
+              style={{
+                marginTop: "10px",
+                padding: "6px 10px",
+                background: "rgba(255,255,255,0.04)",
+                borderRadius: "6px",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "9px",
+                  color: "rgba(255,255,255,0.3)",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginBottom: "3px",
+                }}
+              >
+                Accès
+              </div>
+              <div
+                style={{
+                  fontSize: "10px",
+                  color: roleCfg.color,
+                  fontWeight: "500",
+                  lineHeight: 1.4,
+                }}
+              >
+                {role === "sav"
+                  ? "Support, commandes, clients, modération"
+                  : "Modération, commandes (lecture), clients"}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* NAVIGATION */}
@@ -250,7 +311,7 @@ export default function Sidebar() {
           className="nav-scroll"
           style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}
         >
-          {MENU.map((group, gi) => (
+          {menuVisible.map((group, gi) => (
             <div
               key={group.id}
               style={{

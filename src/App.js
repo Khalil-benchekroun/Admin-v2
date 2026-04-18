@@ -18,6 +18,7 @@ import Invitations from "./pages/Invitations";
 import Clients from "./pages/Clients";
 import Commandes from "./pages/Commandes";
 import Retours from "./pages/Retours";
+import Livraisons from "./pages/Livraisons";
 import SAV from "./pages/SAV";
 import Produits from "./pages/Produits";
 import Stats from "./pages/Stats";
@@ -26,6 +27,8 @@ import Abonnements from "./pages/Abonnements";
 import Moderation from "./pages/Moderation";
 import Parametres from "./pages/Parametres";
 import Comptes from "./pages/Comptes";
+import ZoneService from "./pages/ZoneService";
+import Notifications from "./pages/Notifications";
 
 // ── Theme Context ──
 export const ThemeContext = createContext({ dark: false, toggle: () => {} });
@@ -209,6 +212,14 @@ export default function App() {
               }
             />
             <Route
+              path="/livraisons"
+              element={
+                <PR>
+                  <Livraisons />
+                </PR>
+              }
+            />
+            <Route
               path="/clients"
               element={
                 <PR>
@@ -261,6 +272,22 @@ export default function App() {
               element={
                 <PR>
                   <Comptes />
+                </PR>
+              }
+            />
+            <Route
+              path="/zones"
+              element={
+                <PR>
+                  <ZoneService />
+                </PR>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <PR>
+                  <Notifications />
                 </PR>
               }
             />

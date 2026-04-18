@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
@@ -9,7 +9,18 @@ export function AuthProvider({ children }) {
   const login = (email, password) => {
     setLoading(true);
     setTimeout(() => {
-      setAdmin({ email, name: 'Super Admin', role: 'admin' });
+      // Détecte le rôle selon l'email pour la démo
+      let role = "admin";
+      if (email.includes("sav")) role = "sav";
+      else if (email.includes("ops")) role = "ops";
+
+      const NOMS = {
+        admin: "Khalil B.",
+        sav: "Marie (SAV)",
+        ops: "Paul (Ops)",
+      };
+
+      setAdmin({ email, name: NOMS[role], role });
       setLoading(false);
     }, 800);
   };
