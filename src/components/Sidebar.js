@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// ── Menu complet avec droits par rôle ─────────────────────
-// roles: [] = accessible à tous | ["admin"] = admin seulement etc.
 const MENU = [
   {
     id: "dashboard",
     label: "Tableau de bord",
-    roles: [], // tous
+    roles: [],
     subItems: [
       { path: "/", label: "Vue d'ensemble", roles: [] },
       { path: "/statistiques", label: "Statistiques", roles: [] },
@@ -16,12 +14,23 @@ const MENU = [
   },
   {
     id: "boutiques",
-    label: "Boutiques",
+    label: "Boutiques & Marques",
     roles: [],
     subItems: [
       { path: "/boutiques", label: "Liste des boutiques", roles: [] },
       { path: "/invitations", label: "Liens d'invitation", roles: ["admin"] },
+      { path: "/onboarding", label: "Onboarding", roles: ["admin"] },
       { path: "/abonnements", label: "Abonnements", roles: ["admin"] },
+      { path: "/messagerie", label: "Messagerie", roles: [] },
+    ],
+  },
+  {
+    id: "produits",
+    label: "Produits",
+    roles: [],
+    subItems: [
+      { path: "/produits", label: "Catalogue global", roles: [] },
+      { path: "/categories", label: "Catégories", roles: ["admin"] },
     ],
   },
   {
@@ -30,8 +39,8 @@ const MENU = [
     roles: [],
     subItems: [
       { path: "/commandes", label: "Toutes les commandes", roles: [] },
+      { path: "/livraisons", label: "Suivi livraisons", roles: [] },
       { path: "/retours", label: "Retours", roles: [] },
-      { path: "/livraisons", label: "Livraisons", roles: [] },
     ],
   },
   {
@@ -46,10 +55,12 @@ const MENU = [
   {
     id: "finance",
     label: "Finance",
-    roles: ["admin"], // SAV et Ops n'ont pas accès
+    roles: ["admin"],
     subItems: [
       { path: "/finance", label: "Commissions & CA", roles: ["admin"] },
       { path: "/remboursements", label: "Remboursements", roles: ["admin"] },
+      { path: "/facturation", label: "Facturation", roles: ["admin"] },
+      { path: "/reporting", label: "Reporting", roles: ["admin"] },
     ],
   },
   {
@@ -57,19 +68,23 @@ const MENU = [
     label: "Support & SAV",
     roles: [],
     subItems: [
-      { path: "/sav", label: "Tickets & litiges", roles: [], badge: 3 },
+      { path: "/sav", label: "Tickets", roles: [], badge: 3 },
       { path: "/litiges", label: "Litiges & arbitrage", roles: ["admin"] },
+      {
+        path: "/historique-reclamations",
+        label: "Historique réclamations",
+        roles: [],
+      },
       { path: "/moderation", label: "Modération", roles: [] },
       { path: "/avis", label: "Avis clients", roles: [] },
-      { path: "/produits", label: "Produits", roles: [] },
     ],
   },
   {
-    id: "settings",
+    id: "parametres",
     label: "Paramètres",
-    roles: ["admin"], // SAV et Ops n'ont pas accès
+    roles: ["admin"],
     subItems: [
-      { path: "/parametres", label: "Configuration globale", roles: ["admin"] },
+      { path: "/parametres", label: "Configuration", roles: ["admin"] },
       { path: "/zones", label: "Zones de service", roles: ["admin"] },
       { path: "/notifications", label: "Notifications", roles: ["admin"] },
       { path: "/integrations", label: "Intégrations", roles: ["admin"] },
@@ -85,9 +100,8 @@ const ROLE_CONFIG = {
   ops: { label: "Ops / Modération", color: "#10B981", dot: "#10B981" },
 };
 
-// Filtre les items selon le rôle courant
 function peutAcceder(roles, role) {
-  if (!roles || roles.length === 0) return true; // accessible à tous
+  if (!roles || roles.length === 0) return true;
   return roles.includes(role);
 }
 
@@ -99,7 +113,6 @@ export default function Sidebar() {
   const role = admin?.role || "admin";
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
 
-  // Filtrage du menu selon le rôle
   const menuVisible = MENU.filter((g) => peutAcceder(g.roles, role))
     .map((g) => ({
       ...g,
@@ -138,18 +151,18 @@ export default function Sidebar() {
   return (
     <>
       <style>{`
-        @keyframes sidebarFade { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
-        @keyframes itemFade    { from { opacity:0; } to { opacity:1; } }
-        @keyframes subOpen     { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
-        .admin-group-label { display:flex; align-items:center; justify-content:space-between; padding:7px 16px; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.28); transition:color 0.2s; cursor:pointer; border-radius:4px; }
-        .admin-group-label:hover { color:rgba(255,255,255,0.55); }
-        .admin-group-label.active { color:rgba(201,169,110,0.85); }
-        .admin-sub-link { padding:8px 14px 8px 26px; font-size:12px; font-weight:400; color:rgba(255,255,255,0.35); text-decoration:none; transition:all 0.2s; display:flex; align-items:center; justify-content:space-between; border-radius:4px; }
-        .admin-sub-link:hover { color:rgba(255,255,255,0.8); background:rgba(255,255,255,0.04); }
-        .admin-sub-active { color:#fff !important; background:rgba(201,169,110,0.1) !important; font-weight:500 !important; border-left:1px solid rgba(201,169,110,0.45); padding-left:25px !important; display:flex; align-items:center; justify-content:space-between; }
-        .admin-logout { width:100%; padding:10px 16px; background:none; border:none; cursor:pointer; font-family:var(--font-body); font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.2); text-align:left; transition:color 0.2s; display:flex; align-items:center; gap:10px; }
-        .admin-logout:hover { color:rgba(192,57,43,0.7); }
-        .nav-scroll::-webkit-scrollbar { width:0; }
+        @keyframes sidebarFade { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes itemFade { from{opacity:0} to{opacity:1} }
+        @keyframes subOpen { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+        .admin-group-label{display:flex;align-items:center;justify-content:space-between;padding:7px 16px;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.28);transition:color 0.2s;cursor:pointer;border-radius:4px}
+        .admin-group-label:hover{color:rgba(255,255,255,0.55)}
+        .admin-group-label.active{color:rgba(201,169,110,0.85)}
+        .admin-sub-link{padding:8px 14px 8px 26px;font-size:12px;font-weight:400;color:rgba(255,255,255,0.35);text-decoration:none;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;border-radius:4px}
+        .admin-sub-link:hover{color:rgba(255,255,255,0.8);background:rgba(255,255,255,0.04)}
+        .admin-sub-active{color:#fff!important;background:rgba(201,169,110,0.1)!important;font-weight:500!important;border-left:1px solid rgba(201,169,110,0.45);padding-left:25px!important;display:flex;align-items:center;justify-content:space-between}
+        .admin-logout{width:100%;padding:10px 16px;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.2);text-align:left;transition:color 0.2s;display:flex;align-items:center;gap:10px}
+        .admin-logout:hover{color:rgba(192,57,43,0.7)}
+        .nav-scroll::-webkit-scrollbar{width:0}
       `}</style>
 
       <div
@@ -275,8 +288,6 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
-
-          {/* Badge rôle avec accès restreint si non-admin */}
           {role !== "admin" && (
             <div
               style={{

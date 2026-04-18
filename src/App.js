@@ -34,6 +34,12 @@ import Parrainage from "./pages/Parrainage";
 import Avis from "./pages/Avis";
 import Integrations from "./pages/Integrations";
 import Litiges from "./pages/Litiges";
+import OnboardingAdmin from "./pages/OnboardingAdmin";
+import Messagerie from "./pages/Messagerie";
+import Facturation from "./pages/Facturation";
+import Reporting from "./pages/Reporting";
+import CategoriesAdmin from "./pages/CategoriesAdmin";
+import HistoriqueReclamations from "./pages/HistoriqueReclamations";
 import Remboursements from "./pages/Remboursements";
 
 // ── Theme Context ──
@@ -338,10 +344,58 @@ export default function App() {
               }
             />
             <Route
+              path="/onboarding"
+              element={
+                <PR>
+                  <OnboardingAdmin />
+                </PR>
+              }
+            />
+            <Route
+              path="/messagerie"
+              element={
+                <PR>
+                  <Messagerie />
+                </PR>
+              }
+            />
+            <Route
+              path="/facturation"
+              element={
+                <PR>
+                  <Facturation />
+                </PR>
+              }
+            />
+            <Route
+              path="/reporting"
+              element={
+                <PR>
+                  <Reporting />
+                </PR>
+              }
+            />
+            <Route
               path="/remboursements"
               element={
                 <PR>
                   <Remboursements />
+                </PR>
+              }
+            />
+            <Route
+              path="/categories"
+              element={
+                <PR>
+                  <CategoriesAdmin />
+                </PR>
+              }
+            />
+            <Route
+              path="/historique-reclamations"
+              element={
+                <PR>
+                  <HistoriqueReclamations />
                 </PR>
               }
             />
