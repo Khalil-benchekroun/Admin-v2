@@ -268,6 +268,8 @@ function KpiCard({ label, val, sub, color, delta }) {
 // ── Composant principal ────────────────────────────────────
 export default function Stats() {
   const [periode, setPeriode] = useState("semaine");
+  const [sortBy, setSortBy] = useState("ca");
+  const [sortDir, setSortDir] = useState("desc");
 
   const chartData =
     periode === "semaine"
@@ -276,11 +278,73 @@ export default function Stats() {
       ? DATA_CA_MOIS
       : DATA_CA_6MOIS;
   const xKey = "j";
-
   const totalCommandes = DATA_COMMANDES_STATUTS.reduce(
     (s, d) => s + d.value,
     0
   );
+
+  const toggleSort = (col) => {
+    if (sortBy === col) setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    else {
+      setSortBy(col);
+      setSortDir("desc");
+    }
+  };
+
+  const boutiquesSorted = [...DATA_TOP_BOUTIQUES].sort((a, b) =>
+    sortDir === "desc" ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy]
+  );
+
+  const exportStatsCSV = () => {
+    const totalCA = DATA_TOP_BOUTIQUES.reduce((s, x) => s + x.ca, 0);
+    const rows = [
+      ["=== CLASSEMENT BOUTIQUES ==="],
+      ["Rang", "Boutique", "Plan", "CA mois", "Commandes", "Note", "Part CA"],
+      ...boutiquesSorted.map((b, i) => [
+        i + 1,
+        b.name,
+        b.plan,
+        b.ca + "€",
+        b.commandes,
+        b.note || "0",
+        (totalCA > 0 ? Math.round((b.ca / totalCA) * 100) : 0) + "%",
+      ]),
+      [],
+      ["=== CA & COMMISSIONS (6 mois) ==="],
+      ["Mois", "CA brut", "Commissions", "Commandes"],
+      ...DATA_CA_6MOIS.map((d) => [
+        d.j,
+        d.ca + "€",
+        d.commissions + "€",
+        d.commandes,
+      ]),
+      [],
+      ["=== CLIENTS ACTIFS ==="],
+      ["Mois", "Clients actifs", "Nouveaux"],
+      ...DATA_CLIENTS_ACTIFS.map((d) => [d.j, d.clients, d.nouveaux]),
+      [],
+      ["=== REPARTITION COMMANDES ==="],
+      ["Statut", "Nombre", "Pourcentage"],
+      ...DATA_COMMANDES_STATUTS.map((d) => [
+        d.name,
+        d.value,
+        Math.round((d.value / totalCommandes) * 100) + "%",
+      ]),
+    ];
+    const csv = rows.map((r) => r.join(";")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download =
+      "livrr-statistiques-" +
+      new Date().toLocaleDateString("fr-FR").replace(/\//g, "-") +
+      ".csv";
+    a.click();
+    toast.success("Export statistiques téléchargé");
+  };
 
   return (
     <div className="page" style={{ padding: "44px 52px" }}>
@@ -322,41 +386,59 @@ export default function Stats() {
             Vue analytique de la plateforme LIVRR
           </p>
         </div>
-        {/* Toggle période global */}
-        <div
-          style={{
-            display: "flex",
-            gap: "6px",
-            background: "#fff",
-            padding: "6px",
-            borderRadius: "var(--radius-md)",
-            border: "1px solid var(--white-3)",
-            boxShadow: "var(--shadow-sm)",
-          }}
-        >
-          {[
-            { val: "semaine", label: "7 jours" },
-            { val: "mois", label: "30 jours" },
-            { val: "6mois", label: "6 mois" },
-          ].map((p) => (
-            <button
-              key={p.val}
-              onClick={() => setPeriode(p.val)}
-              style={{
-                padding: "7px 16px",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "12px",
-                fontWeight: "600",
-                cursor: "pointer",
-                background: periode === p.val ? "var(--noir)" : "transparent",
-                color: periode === p.val ? "var(--gold)" : "var(--gray)",
-                border: "none",
-                transition: "all 0.18s",
-              }}
-            >
-              {p.label}
-            </button>
-          ))}
+        {/* Boutons header */}
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <button
+            onClick={exportStatsCSV}
+            style={{
+              padding: "10px 18px",
+              borderRadius: "var(--radius-sm)",
+              fontSize: "12px",
+              fontWeight: "600",
+              background: "var(--noir)",
+              color: "var(--gold)",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            ↓ Exporter CSV
+          </button>
+          {/* Toggle période global */}
+          <div
+            style={{
+              display: "flex",
+              gap: "6px",
+              background: "#fff",
+              padding: "6px",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--white-3)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
+            {[
+              { val: "semaine", label: "7 jours" },
+              { val: "mois", label: "30 jours" },
+              { val: "6mois", label: "6 mois" },
+            ].map((p) => (
+              <button
+                key={p.val}
+                onClick={() => setPeriode(p.val)}
+                style={{
+                  padding: "7px 16px",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  background: periode === p.val ? "var(--noir)" : "transparent",
+                  color: periode === p.val ? "var(--gold)" : "var(--gray)",
+                  border: "none",
+                  transition: "all 0.18s",
+                }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -860,9 +942,58 @@ export default function Stats() {
         </Card>
       </div>
 
-      {/* ── Top boutiques ── */}
+      {/* ── Classement boutiques par performance ── */}
       <Card>
-        <SectionHeader title="Performance" sub="Top boutiques du mois" />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: "20px",
+          }}
+        >
+          <SectionHeader
+            title="Performance"
+            sub="Classement boutiques — cliquez sur une colonne pour trier"
+          />
+          <div style={{ display: "flex", gap: "6px" }}>
+            <span
+              style={{
+                fontSize: "11px",
+                color: "var(--gray)",
+                alignSelf: "center",
+              }}
+            >
+              Trié par
+            </span>
+            {[
+              { key: "ca", label: "CA" },
+              { key: "commandes", label: "Commandes" },
+              { key: "note", label: "Note" },
+            ].map((s) => (
+              <button
+                key={s.key}
+                onClick={() => toggleSort(s.key)}
+                style={{
+                  padding: "5px 12px",
+                  borderRadius: "20px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  border: `1.5px solid ${
+                    sortBy === s.key ? "var(--gold)" : "var(--white-3)"
+                  }`,
+                  background:
+                    sortBy === s.key ? "rgba(201,169,110,0.08)" : "transparent",
+                  color: sortBy === s.key ? "var(--gold-dark)" : "var(--gray)",
+                }}
+              >
+                {s.label}{" "}
+                {sortBy === s.key ? (sortDir === "desc" ? "▼" : "▲") : ""}
+              </button>
+            ))}
+          </div>
+        </div>
         <table
           style={{
             width: "100%",
@@ -873,16 +1004,18 @@ export default function Stats() {
           <thead>
             <tr style={{ background: "var(--gray-bg)" }}>
               {[
-                "#",
-                "Boutique",
-                "Plan",
-                "CA mois",
-                "Commandes",
-                "Note",
-                "Part du CA",
+                { label: "#", key: null },
+                { label: "Boutique", key: null },
+                { label: "Plan", key: null },
+                { label: "CA mois", key: "ca" },
+                { label: "Commandes", key: "commandes" },
+                { label: "Note", key: "note" },
+                { label: "Part du CA", key: "ca" },
+                { label: "Score global", key: null },
               ].map((h) => (
                 <th
-                  key={h}
+                  key={h.label}
+                  onClick={() => h.key && toggleSort(h.key)}
                   style={{
                     padding: "10px 14px",
                     textAlign: "left",
@@ -890,17 +1023,27 @@ export default function Stats() {
                     fontWeight: "700",
                     textTransform: "uppercase",
                     letterSpacing: "0.08em",
-                    color: "var(--gray)",
+                    color:
+                      h.key && sortBy === h.key
+                        ? "var(--gold-dark)"
+                        : "var(--gray)",
                     borderBottom: "1px solid var(--white-3)",
+                    cursor: h.key ? "pointer" : "default",
+                    whiteSpace: "nowrap",
                   }}
                 >
-                  {h}
+                  {h.label}{" "}
+                  {h.key && sortBy === h.key
+                    ? sortDir === "desc"
+                      ? "▼"
+                      : "▲"
+                    : ""}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {DATA_TOP_BOUTIQUES.map((b, i) => {
+            {boutiquesSorted.map((b, i) => {
               const totalCA = DATA_TOP_BOUTIQUES.reduce((s, x) => s + x.ca, 0);
               const part = totalCA > 0 ? Math.round((b.ca / totalCA) * 100) : 0;
               const planColor = {
@@ -908,10 +1051,33 @@ export default function Stats() {
                 Signature: "#3B82F6",
                 Classic: "#6B7280",
               }[b.plan];
+              // Score global sur 100 : CA 50% + commandes 30% + note 20%
+              const maxCA = Math.max(...DATA_TOP_BOUTIQUES.map((x) => x.ca));
+              const maxCmd = Math.max(
+                ...DATA_TOP_BOUTIQUES.map((x) => x.commandes)
+              );
+              const scoreCA = maxCA > 0 ? (b.ca / maxCA) * 50 : 0;
+              const scoreCmd = maxCmd > 0 ? (b.commandes / maxCmd) * 30 : 0;
+              const scoreNote = b.note > 0 ? ((b.note - 4) / 1) * 20 : 0;
+              const score = Math.round(scoreCA + scoreCmd + scoreNote);
+              const scoreColor =
+                score >= 80 ? "#2e8b57" : score >= 50 ? "#b7770d" : "#c0392b";
+              const rang =
+                sortBy === "ca"
+                  ? i + 1
+                  : [...DATA_TOP_BOUTIQUES]
+                      .sort((a, z) => z.ca - a.ca)
+                      .findIndex((x) => x.name === b.name) + 1;
               return (
                 <tr
                   key={b.name}
-                  style={{ borderBottom: "1px solid var(--white-3)" }}
+                  style={{
+                    borderBottom: "1px solid var(--white-3)",
+                    background:
+                      i === 0 && sortDir === "desc"
+                        ? "rgba(201,169,110,0.03)"
+                        : "transparent",
+                  }}
                 >
                   <td
                     style={{
@@ -922,7 +1088,7 @@ export default function Stats() {
                       color: i === 0 ? "var(--gold)" : "var(--gray-light)",
                     }}
                   >
-                    {i + 1}
+                    {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1}
                   </td>
                   <td style={{ padding: "14px", fontWeight: "500" }}>
                     {b.name}
@@ -947,15 +1113,27 @@ export default function Stats() {
                       {b.plan}
                     </span>
                   </td>
-                  <td style={{ padding: "14px", fontWeight: "600" }}>
+                  <td
+                    style={{
+                      padding: "14px",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                    }}
+                  >
                     {b.ca.toLocaleString("fr-FR")}€
                   </td>
-                  <td style={{ padding: "14px", color: "var(--gray)" }}>
+                  <td
+                    style={{
+                      padding: "14px",
+                      color: "var(--gray)",
+                      fontWeight: "500",
+                    }}
+                  >
                     {b.commandes}
                   </td>
                   <td style={{ padding: "14px" }}>
                     {b.note > 0 ? (
-                      <span style={{ color: "#b7770d", fontWeight: "600" }}>
+                      <span style={{ color: "#b7770d", fontWeight: "700" }}>
                         ★ {b.note}
                       </span>
                     ) : (
@@ -1009,11 +1187,76 @@ export default function Stats() {
                       </span>
                     )}
                   </td>
+                  <td style={{ padding: "14px" }}>
+                    {b.ca > 0 ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "50%",
+                            background: `${scoreColor}18`,
+                            border: `2px solid ${scoreColor}40`,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            color: scoreColor,
+                          }}
+                        >
+                          {score}
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            height: 4,
+                            background: "var(--white-3)",
+                            borderRadius: "4px",
+                            overflow: "hidden",
+                            maxWidth: "60px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: "100%",
+                              width: `${score}%`,
+                              background: scoreColor,
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <span
+                        style={{ color: "var(--gray-light)", fontSize: "12px" }}
+                      >
+                        N/A
+                      </span>
+                    )}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        <div
+          style={{
+            marginTop: "14px",
+            paddingTop: "12px",
+            borderTop: "1px solid var(--white-3)",
+            fontSize: "11px",
+            color: "var(--gray-light)",
+          }}
+        >
+          Score global = CA (50%) + Volume commandes (30%) + Note clients (20%)
+        </div>
       </Card>
     </div>
   );

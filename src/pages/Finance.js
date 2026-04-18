@@ -264,18 +264,36 @@ export default function Finance() {
   };
 
   const exportCSV = () => {
+    const totalCA = filtres.reduce((s, v) => s + v.caBrut, 0);
+    const totalComm = filtres.reduce((s, v) => s + v.commissionMontant, 0);
+    const totalDu = filtres
+      .filter((v) => v.statut === "en_attente")
+      .reduce((s, v) => s + v.montantDu, 0);
     const rows = [
+      ["=== LIVRR — EXPORT FINANCE ==="],
       [
-        "ID",
+        "Généré le",
+        new Date().toLocaleDateString("fr-FR") +
+          " à " +
+          new Date().toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+      ],
+      [],
+      ["=== VERSEMENTS BOUTIQUES ==="],
+      [
+        "ID Versement",
         "Boutique",
         "Plan",
-        "Commission",
-        "CA Brut",
+        "Taux commission",
+        "CA Brut (€)",
         "Commission (€)",
-        "Montant dû",
+        "Montant dû (€)",
         "Statut",
         "Période",
         "Échéance",
+        "Commandes",
       ],
       ...filtres.map((v) => [
         v.id,
@@ -288,18 +306,43 @@ export default function Finance() {
         v.statut,
         v.periode,
         v.dateEcheance,
+        v.commandes,
       ]),
+      [],
+      ["=== REMBOURSEMENTS DU MOIS ==="],
+      ["ID", "Client", "Boutique", "Montant (€)", "Motif", "Date", "Statut"],
+      ...REMBOURSEMENTS.map((r) => [
+        r.id,
+        r.client,
+        r.boutique,
+        r.montant,
+        r.motif,
+        r.date,
+        r.statut,
+      ]),
+      [],
+      ["=== TOTAUX ==="],
+      ["CA brut total", totalCA + "€"],
+      ["Commissions LIVRR", totalComm + "€"],
+      ["À verser aux boutiques", totalDu + "€"],
+      [
+        "Total remboursements",
+        REMBOURSEMENTS.reduce((s, r) => s + r.montant, 0) + "€",
+      ],
     ];
     const csv = rows.map((r) => r.join(";")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `livrr-finance-export-${new Date()
-      .toLocaleDateString("fr-FR")
-      .replace(/\//g, "-")}.csv`;
+    a.download =
+      "livrr-finance-" +
+      new Date().toLocaleDateString("fr-FR").replace(/\//g, "-") +
+      ".csv";
     a.click();
-    toast.success("Export CSV téléchargé");
+    toast.success("Export finance complet téléchargé");
   };
 
   return (
