@@ -29,6 +29,12 @@ import Parametres from "./pages/Parametres";
 import Comptes from "./pages/Comptes";
 import ZoneService from "./pages/ZoneService";
 import Notifications from "./pages/Notifications";
+import AuditLog from "./pages/AuditLog";
+import Parrainage from "./pages/Parrainage";
+import Avis from "./pages/Avis";
+import Integrations from "./pages/Integrations";
+import Litiges from "./pages/Litiges";
+import Remboursements from "./pages/Remboursements";
 
 // ── Theme Context ──
 export const ThemeContext = createContext({ dark: false, toggle: () => {} });
@@ -288,6 +294,54 @@ export default function App() {
               element={
                 <PR>
                   <Notifications />
+                </PR>
+              }
+            />
+            <Route
+              path="/audit"
+              element={
+                <PR>
+                  <AuditLog />
+                </PR>
+              }
+            />
+            <Route
+              path="/parrainage"
+              element={
+                <PR>
+                  <Parrainage />
+                </PR>
+              }
+            />
+            <Route
+              path="/avis"
+              element={
+                <PR>
+                  <Avis />
+                </PR>
+              }
+            />
+            <Route
+              path="/integrations"
+              element={
+                <PR>
+                  <Integrations />
+                </PR>
+              }
+            />
+            <Route
+              path="/litiges"
+              element={
+                <PR>
+                  <Litiges />
+                </PR>
+              }
+            />
+            <Route
+              path="/remboursements"
+              element={
+                <PR>
+                  <Remboursements />
                 </PR>
               }
             />

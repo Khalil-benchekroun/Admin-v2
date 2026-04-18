@@ -38,7 +38,10 @@ const MENU = [
     id: "clients",
     label: "Clients",
     roles: [],
-    subItems: [{ path: "/clients", label: "Liste des clients", roles: [] }],
+    subItems: [
+      { path: "/clients", label: "Liste des clients", roles: [] },
+      { path: "/parrainage", label: "Parrainage", roles: [] },
+    ],
   },
   {
     id: "finance",
@@ -46,6 +49,7 @@ const MENU = [
     roles: ["admin"], // SAV et Ops n'ont pas accès
     subItems: [
       { path: "/finance", label: "Commissions & CA", roles: ["admin"] },
+      { path: "/remboursements", label: "Remboursements", roles: ["admin"] },
     ],
   },
   {
@@ -54,7 +58,9 @@ const MENU = [
     roles: [],
     subItems: [
       { path: "/sav", label: "Tickets & litiges", roles: [], badge: 3 },
+      { path: "/litiges", label: "Litiges & arbitrage", roles: ["admin"] },
       { path: "/moderation", label: "Modération", roles: [] },
+      { path: "/avis", label: "Avis clients", roles: [] },
       { path: "/produits", label: "Produits", roles: [] },
     ],
   },
@@ -66,6 +72,8 @@ const MENU = [
       { path: "/parametres", label: "Configuration globale", roles: ["admin"] },
       { path: "/zones", label: "Zones de service", roles: ["admin"] },
       { path: "/notifications", label: "Notifications", roles: ["admin"] },
+      { path: "/integrations", label: "Intégrations", roles: ["admin"] },
+      { path: "/audit", label: "Journal d'audit", roles: ["admin"] },
       { path: "/comptes", label: "Comptes admin / SAV", roles: ["admin"] },
     ],
   },
