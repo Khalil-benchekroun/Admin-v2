@@ -90,6 +90,7 @@ const MENU = [
       { path: "/integrations", label: "Intégrations", roles: ["admin"] },
       { path: "/audit", label: "Journal d'audit", roles: ["admin"] },
       { path: "/comptes", label: "Comptes admin / SAV", roles: ["admin"] },
+      { path: "/tutorial", label: "Guide d'utilisation", roles: [] },
     ],
   },
 ];

@@ -265,7 +265,7 @@ export default function HistoriqueReclamations() {
   };
 
   return (
-    <div className="page" style={{ padding: "44px 52px" }}>
+    <div className="page" style={{ padding: "32px 36px" }}>
       <div
         style={{
           display: "flex",
@@ -326,8 +326,8 @@ export default function HistoriqueReclamations() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "14px",
-          marginBottom: "28px",
+          gap: "10px",
+          marginBottom: "18px",
         }}
       >
         {[
@@ -469,13 +469,7 @@ export default function HistoriqueReclamations() {
       </div>
 
       {/* Layout tableau + détail */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 380px",
-          gap: "16px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px" }}>
         {/* Tableau */}
         <div
           style={{
@@ -657,150 +651,6 @@ export default function HistoriqueReclamations() {
             </div>
           )}
         </div>
-
-        {/* Détail */}
-        {!rec ? (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--gray)",
-            }}
-          >
-            <div style={{ textAlign: "center", padding: "32px" }}>
-              <div style={{ fontSize: "40px", marginBottom: "12px" }}>📋</div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "18px",
-                  fontWeight: "300",
-                }}
-              >
-                Sélectionnez
-                <br />
-                une réclamation
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                padding: "16px 20px",
-                borderBottom: "1px solid var(--white-3)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "18px",
-                  fontWeight: "300",
-                  marginBottom: "6px",
-                }}
-              >
-                {rec.id}
-              </div>
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: "600",
-                    padding: "3px 10px",
-                    borderRadius: "20px",
-                    background: TYPE_CFG[rec.type].bg,
-                    color: TYPE_CFG[rec.type].color,
-                  }}
-                >
-                  {TYPE_CFG[rec.type].icon} {TYPE_CFG[rec.type].label}
-                </span>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: "600",
-                    padding: "3px 10px",
-                    borderRadius: "20px",
-                    background: (
-                      RESOLUTION_CFG[rec.resolution] || RESOLUTION_CFG["résolu"]
-                    ).bg,
-                    color: (
-                      RESOLUTION_CFG[rec.resolution] || RESOLUTION_CFG["résolu"]
-                    ).color,
-                  }}
-                >
-                  {
-                    (RESOLUTION_CFG[rec.resolution] || RESOLUTION_CFG["résolu"])
-                      .label
-                  }
-                </span>
-              </div>
-            </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
-              <div style={{ marginBottom: "14px" }}>
-                <div
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: "700",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                    color: "var(--gray)",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Sujet
-                </div>
-                <div style={{ fontSize: "13px", fontWeight: "500" }}>
-                  {rec.sujet}
-                </div>
-              </div>
-              {[
-                { label: "Client", val: rec.client },
-                { label: "Boutique", val: rec.boutique },
-                { label: "Date & heure", val: `${rec.date} à ${rec.heure}` },
-                { label: "Assigné à", val: rec.assigné },
-                {
-                  label: "Montant concerné",
-                  val: rec.montant ? `${rec.montant}€` : "—",
-                },
-                {
-                  label: "Temps de résolution",
-                  val: rec.tempResolution || "En cours",
-                },
-              ].map((r) => (
-                <div
-                  key={r.label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "8px",
-                    padding: "8px 0",
-                    borderBottom: "1px solid var(--white-3)",
-                  }}
-                >
-                  <span style={{ fontSize: "12px", color: "var(--gray)" }}>
-                    {r.label}
-                  </span>
-                  <span style={{ fontSize: "12px", fontWeight: "500" }}>
-                    {r.val}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

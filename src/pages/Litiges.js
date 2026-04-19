@@ -355,7 +355,7 @@ export default function Litiges() {
   };
 
   return (
-    <div className="page" style={{ padding: "44px 52px" }}>
+    <div className="page" style={{ padding: "32px 36px" }}>
       <div style={{ marginBottom: "36px" }}>
         <div
           style={{
@@ -390,8 +390,8 @@ export default function Litiges() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "14px",
-          marginBottom: "28px",
+          gap: "10px",
+          marginBottom: "18px",
         }}
       >
         {[
@@ -445,7 +445,7 @@ export default function Litiges() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "340px 1fr",
+          gridTemplateColumns: "300px 1fr",
           gap: "20px",
         }}
       >
@@ -458,7 +458,7 @@ export default function Litiges() {
             border: "1px solid var(--white-3)",
             display: "flex",
             flexDirection: "column",
-            maxHeight: "calc(100vh - 310px)",
+            maxHeight: "calc(100vh - 265px)",
             overflow: "hidden",
           }}
         >

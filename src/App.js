@@ -40,6 +40,7 @@ import Facturation from "./pages/Facturation";
 import Reporting from "./pages/Reporting";
 import CategoriesAdmin from "./pages/CategoriesAdmin";
 import HistoriqueReclamations from "./pages/HistoriqueReclamations";
+import TutorialAdmin from "./pages/TutorialAdmin";
 import Remboursements from "./pages/Remboursements";
 
 // ── Theme Context ──
@@ -399,6 +400,7 @@ export default function App() {
                 </PR>
               }
             />
+            <Route path="/tutorial" element={<TutorialAdmin />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>

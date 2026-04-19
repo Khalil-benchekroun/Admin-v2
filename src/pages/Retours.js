@@ -511,7 +511,7 @@ export default function Retours() {
   };
 
   return (
-    <div className="page" style={{ padding: "44px 52px" }}>
+    <div className="page" style={{ padding: "32px 36px" }}>
       {/* ── Header ── */}
       <div style={{ marginBottom: "36px" }}>
         <div
@@ -546,8 +546,8 @@ export default function Retours() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "14px",
-          marginBottom: "32px",
+          gap: "10px",
+          marginBottom: "20px",
         }}
       >
         {[
@@ -623,7 +623,7 @@ export default function Retours() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "400px 1fr",
+          gridTemplateColumns: "340px 1fr",
           gap: "20px",
         }}
       >
@@ -636,7 +636,7 @@ export default function Retours() {
             border: "1px solid var(--white-3)",
             display: "flex",
             flexDirection: "column",
-            maxHeight: "calc(100vh - 360px)",
+            maxHeight: "calc(100vh - 300px)",
             overflow: "hidden",
           }}
         >

@@ -365,97 +365,129 @@ export default function Invitations() {
         ))}
       </div>
 
-      {/* ── Layout ── */}
+      {/* ── Filtres ── */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "380px 1fr",
-          gap: "20px",
+          background: "#fff",
+          borderRadius: "var(--radius-lg)",
+          padding: "14px 20px",
+          boxShadow: "var(--shadow-sm)",
+          border: "1px solid var(--white-3)",
+          marginBottom: "16px",
+          display: "flex",
+          gap: "10px",
+          flexWrap: "wrap",
+          alignItems: "center",
         }}
       >
-        {/* ── Liste ── */}
-        <div
+        <input
+          type="text"
+          placeholder="Boutique, email, ID…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           style={{
-            background: "#fff",
-            borderRadius: "var(--radius-lg)",
-            boxShadow: "var(--shadow-sm)",
+            padding: "8px 12px",
             border: "1px solid var(--white-3)",
-            display: "flex",
-            flexDirection: "column",
-            maxHeight: "calc(100vh - 320px)",
-            overflow: "hidden",
+            borderRadius: "var(--radius-sm)",
+            fontSize: "13px",
+            background: "var(--gray-bg)",
+            outline: "none",
+            minWidth: "200px",
+          }}
+        />
+        <div style={{ width: 1, height: 20, background: "var(--white-3)" }} />
+        <button
+          onClick={() => setFilterStatut("all")}
+          style={fBtn(filterStatut === "all")}
+        >
+          Tous
+        </button>
+        {Object.entries(STATUT_CFG).map(([k, v]) => (
+          <button
+            key={k}
+            onClick={() => setFilterStatut(k)}
+            style={fBtn(filterStatut === k, v.color, v.bg)}
+          >
+            {v.label}
+          </button>
+        ))}
+        <div style={{ width: 1, height: 20, background: "var(--white-3)" }} />
+        <button
+          onClick={() => setFilterPlan("all")}
+          style={fBtn(filterPlan === "all")}
+        >
+          Tous plans
+        </button>
+        {Object.entries(PLANS).map(([k, v]) => (
+          <button
+            key={k}
+            onClick={() => setFilterPlan(k)}
+            style={fBtn(filterPlan === k, v.color, v.bg)}
+          >
+            {v.label}
+          </button>
+        ))}
+        <span
+          style={{ marginLeft: "auto", fontSize: "12px", color: "var(--gray)" }}
+        >
+          {filtres.length} invitation{filtres.length > 1 ? "s" : ""}
+        </span>
+      </div>
+
+      {/* ── Tableau pleine largeur ── */}
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "var(--radius-lg)",
+          boxShadow: "var(--shadow-sm)",
+          border: "1px solid var(--white-3)",
+          overflow: "hidden",
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            fontSize: "13px",
           }}
         >
-          <div
-            style={{
-              padding: "14px 16px",
-              borderBottom: "1px solid var(--white-3)",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Boutique, email, ID…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                border: "1px solid var(--white-3)",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "13px",
-                background: "var(--gray-bg)",
-                outline: "none",
-                marginBottom: "10px",
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                gap: "5px",
-                flexWrap: "wrap",
-                marginBottom: "6px",
-              }}
-            >
-              <button
-                onClick={() => setFilterStatut("all")}
-                style={fBtn(filterStatut === "all")}
-              >
-                Tous
-              </button>
-              {Object.entries(STATUT_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setFilterStatut(k)}
-                  style={fBtn(filterStatut === k, v.color, v.bg)}
+          <thead>
+            <tr style={{ background: "var(--gray-bg)" }}>
+              {[
+                "ID",
+                "Boutique",
+                "Email",
+                "Plan",
+                "Créé par",
+                "Création",
+                "Expiration",
+                "Statut",
+                "Lien",
+                "",
+              ].map((h) => (
+                <th
+                  key={h}
+                  style={{
+                    padding: "11px 14px",
+                    textAlign: "left",
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    color: "var(--gray)",
+                    borderBottom: "1px solid var(--white-3)",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  {v.label}
-                </button>
+                  {h}
+                </th>
               ))}
-            </div>
-            <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-              <button
-                onClick={() => setFilterPlan("all")}
-                style={fBtn(filterPlan === "all")}
-              >
-                Tous plans
-              </button>
-              {Object.entries(PLANS).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setFilterPlan(k)}
-                  style={fBtn(filterPlan === k, v.color, v.bg)}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ flex: 1, overflowY: "auto" }}>
+            </tr>
+          </thead>
+          <tbody>
             {filtres.map((i) => {
               const plan = PLANS[i.plan];
               const statut = STATUT_CFG[i.statut];
-              const isActive = selected === i.id;
               const isExpiringSoon =
                 i.statut === "envoyé" &&
                 (() => {
@@ -466,463 +498,201 @@ export default function Invitations() {
                   return diff <= 2;
                 })();
               return (
-                <div
+                <tr
                   key={i.id}
-                  onClick={() => {
-                    setSelected(i.id);
-                    setShowNoteInput(false);
-                  }}
                   style={{
-                    padding: "13px 16px",
                     borderBottom: "1px solid var(--white-3)",
-                    cursor: "pointer",
-                    background: isActive
-                      ? "rgba(201,169,110,0.06)"
+                    background: isExpiringSoon
+                      ? "rgba(192,57,43,0.015)"
                       : "transparent",
-                    borderLeft: isActive
-                      ? "3px solid var(--gold)"
-                      : "3px solid transparent",
-                    transition: "all 0.15s",
                   }}
                 >
-                  <div
+                  <td
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "11px",
-                          fontWeight: "700",
-                          color: "var(--gold-dark)",
-                        }}
-                      >
-                        {i.id}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "10px",
-                          fontWeight: "600",
-                          padding: "2px 7px",
-                          borderRadius: "10px",
-                          background: plan.bg,
-                          color: plan.color,
-                        }}
-                      >
-                        {plan.label}
-                      </span>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        fontWeight: "600",
-                        padding: "2px 8px",
-                        borderRadius: "10px",
-                        background: statut.bg,
-                        color: statut.color,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {statut.label}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "500",
-                      marginBottom: "2px",
-                    }}
-                  >
-                    {i.boutique}
-                  </div>
-                  <div
-                    style={{
+                      padding: "13px 14px",
+                      fontFamily: "monospace",
                       fontSize: "11px",
-                      color: "var(--gray)",
-                      marginBottom: "4px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      fontWeight: "700",
+                      color: "var(--gold-dark)",
                       whiteSpace: "nowrap",
+                    }}
+                  >
+                    {i.id}
+                  </td>
+                  <td style={{ padding: "13px 14px", fontWeight: "600" }}>
+                    {i.boutique}
+                  </td>
+                  <td
+                    style={{
+                      padding: "13px 14px",
+                      fontSize: "12px",
+                      color: "var(--gray)",
                     }}
                   >
                     {i.email}
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: isExpiringSoon ? "#c0392b" : "var(--gray-light)",
-                        fontWeight: isExpiringSoon ? "700" : "400",
-                      }}
-                    >
-                      {i.statut === "utilisé"
-                        ? `Utilisé le ${i.dateUtilisation}`
-                        : `Expire le ${i.dateExpiration}`}
-                      {isExpiringSoon && " ⚠"}
-                    </span>
-                    <span
-                      style={{ fontSize: "10px", color: "var(--gray-light)" }}
-                    >
-                      {i.crééPar}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── Détail ── */}
-        {!inv ? (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: "400px",
-              color: "var(--gray)",
-            }}
-          >
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔗</div>
-            <div
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "22px",
-                fontWeight: "300",
-                marginBottom: "8px",
-              }}
-            >
-              Sélectionnez une invitation
-            </div>
-            <div style={{ fontSize: "13px" }}>Ou créez-en une nouvelle</div>
-          </div>
-        ) : (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                padding: "22px 28px",
-                borderBottom: "1px solid var(--white-3)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "700",
-                        color: "var(--gold-dark)",
-                      }}
-                    >
-                      {inv.id}
-                    </span>
+                  </td>
+                  <td style={{ padding: "13px 14px" }}>
                     <span
                       style={{
                         fontSize: "11px",
                         fontWeight: "600",
                         padding: "3px 10px",
                         borderRadius: "12px",
-                        background: PLANS[inv.plan].bg,
-                        color: PLANS[inv.plan].color,
+                        background: plan.bg,
+                        color: plan.color,
                       }}
                     >
-                      {PLANS[inv.plan].label}
+                      {plan.label}
                     </span>
+                  </td>
+                  <td
+                    style={{
+                      padding: "13px 14px",
+                      fontSize: "12px",
+                      color: "var(--gray)",
+                    }}
+                  >
+                    {i.crééPar}
+                  </td>
+                  <td
+                    style={{
+                      padding: "13px 14px",
+                      fontSize: "12px",
+                      color: "var(--gray)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {i.dateCreation}
+                  </td>
+                  <td
+                    style={{
+                      padding: "13px 14px",
+                      fontSize: "12px",
+                      whiteSpace: "nowrap",
+                      color: isExpiringSoon ? "#c0392b" : "var(--gray)",
+                      fontWeight: isExpiringSoon ? "700" : "400",
+                    }}
+                  >
+                    {i.statut === "utilisé"
+                      ? `✓ ${i.dateUtilisation}`
+                      : i.dateExpiration}
+                    {isExpiringSoon && " ⚠"}
+                  </td>
+                  <td style={{ padding: "13px 14px" }}>
                     <span
                       style={{
                         fontSize: "11px",
                         fontWeight: "600",
                         padding: "3px 10px",
                         borderRadius: "12px",
-                        background: STATUT_CFG[inv.statut].bg,
-                        color: STATUT_CFG[inv.statut].color,
+                        background: statut.bg,
+                        color: statut.color,
                         display: "inline-flex",
                         alignItems: "center",
-                        gap: "5px",
+                        gap: "4px",
                       }}
                     >
                       <span
                         style={{
-                          width: 6,
-                          height: 6,
+                          width: 5,
+                          height: 5,
                           borderRadius: "50%",
-                          background: STATUT_CFG[inv.statut].dot,
+                          background: statut.dot,
                         }}
                       />
-                      {STATUT_CFG[inv.statut].label}
+                      {statut.label}
                     </span>
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "26px",
-                      fontWeight: "300",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    {inv.boutique}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "var(--gray)" }}>
-                    {inv.email}
-                  </div>
-                </div>
-                <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-                  {(inv.statut === "envoyé" || inv.statut === "expiré") && (
-                    <button
-                      onClick={renouvelerInvitation}
-                      style={btnStyle("ghost")}
-                    >
-                      Renouveler
-                    </button>
-                  )}
-                  {inv.statut === "envoyé" && (
-                    <button
-                      onClick={() => copierLien(inv.lien)}
-                      style={btnStyle("gold")}
-                    >
-                      📋 Copier le lien
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
-              {/* Lien */}
-              <div style={{ marginBottom: "22px" }}>
-                <Label>Lien d'invitation</Label>
-                <div
-                  style={{ display: "flex", gap: "8px", alignItems: "center" }}
-                >
-                  <div
-                    style={{
-                      flex: 1,
-                      background: "var(--gray-bg)",
-                      border: "1px solid var(--white-3)",
-                      borderRadius: "var(--radius-sm)",
-                      padding: "10px 14px",
-                      fontSize: "12px",
-                      color:
-                        inv.statut === "utilisé"
-                          ? "var(--gray-light)"
-                          : "var(--noir)",
-                      fontFamily: "monospace",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {inv.lien}
-                  </div>
-                  <button
-                    onClick={() => copierLien(inv.lien)}
-                    style={{
-                      padding: "10px 14px",
-                      borderRadius: "var(--radius-sm)",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      border: "1.5px solid var(--white-3)",
-                      background: "transparent",
-                      color: "var(--gray)",
-                      cursor: "pointer",
-                      flexShrink: 0,
-                    }}
-                  >
-                    📋
-                  </button>
-                </div>
-              </div>
-
-              {/* Infos */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "14px",
-                  marginBottom: "22px",
-                }}
-              >
-                {[
-                  {
-                    label: "Plan invité",
-                    val: `${PLANS[inv.plan].label} — ${PLANS[inv.plan].prix}`,
-                  },
-                  { label: "Créé par", val: inv.crééPar },
-                  { label: "Date de création", val: inv.dateCreation },
-                  { label: "Date d'expiration", val: inv.dateExpiration },
-                  ...(inv.dateUtilisation
-                    ? [{ label: "Utilisé le", val: inv.dateUtilisation }]
-                    : []),
-                  { label: "Token", val: inv.token, mono: true },
-                ].map((r) => (
-                  <div
-                    key={r.label}
-                    style={{
-                      background: "var(--gray-bg)",
-                      borderRadius: "var(--radius-sm)",
-                      padding: "12px 14px",
-                      border: "1px solid var(--white-3)",
-                    }}
-                  >
+                  </td>
+                  <td style={{ padding: "13px 14px", maxWidth: "200px" }}>
                     <div
                       style={{
-                        fontSize: "10px",
-                        fontWeight: "700",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.1em",
-                        color: "var(--gray)",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {r.label}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "13px",
-                        fontWeight: "500",
-                        fontFamily: r.mono ? "monospace" : "inherit",
+                        fontSize: "11px",
+                        fontFamily: "monospace",
+                        color:
+                          i.statut === "utilisé"
+                            ? "var(--gray-light)"
+                            : "var(--gray)",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {r.val}
+                      {i.lien}
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Notes */}
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <Label style={{ margin: 0 }}>Notes</Label>
-                  {!showNoteInput && (
-                    <button
-                      onClick={() => setShowNoteInput(true)}
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        color: "var(--gold-dark)",
-                        padding: "3px 10px",
-                        border: "1px dashed var(--gold)",
-                        borderRadius: "20px",
-                        cursor: "pointer",
-                        background: "rgba(201,169,110,0.05)",
-                      }}
-                    >
-                      + Ajouter
-                    </button>
-                  )}
-                </div>
-                <div
-                  style={{
-                    background: "#fffbeb",
-                    border: "1px solid #fde68a",
-                    borderRadius: "var(--radius-md)",
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: inv.notes ? "var(--noir)" : "var(--gray-light)",
-                    fontStyle: inv.notes ? "normal" : "italic",
-                    whiteSpace: "pre-wrap",
-                    lineHeight: 1.6,
-                    marginBottom: showNoteInput ? "10px" : 0,
-                  }}
-                >
-                  {inv.notes || "Aucune note."}
-                </div>
-                {showNoteInput && (
-                  <div>
-                    <textarea
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      placeholder="Ajouter une note…"
-                      rows={2}
-                      autoFocus
-                      style={{
-                        width: "100%",
-                        padding: "10px 12px",
-                        border: "1.5px solid var(--gold)",
-                        borderRadius: "var(--radius-sm)",
-                        fontSize: "13px",
-                        resize: "none",
-                        outline: "none",
-                        marginBottom: "8px",
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          setShowNoteInput(false);
-                          setNoteText("");
+                    {i.notes && (
+                      <div
+                        style={{
+                          fontSize: "10px",
+                          color: "var(--gray-light)",
+                          marginTop: "2px",
+                          fontStyle: "italic",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
                         }}
-                        style={btnStyle("ghost")}
                       >
-                        Annuler
-                      </button>
-                      <button onClick={ajouterNote} style={btnStyle("gold")}>
-                        Enregistrer
-                      </button>
+                        📝 {i.notes}
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ padding: "13px 14px" }}>
+                    <div style={{ display: "flex", gap: "5px" }}>
+                      {i.statut === "envoyé" && (
+                        <button
+                          onClick={() => copierLien(i.lien)}
+                          style={{
+                            padding: "5px 10px",
+                            borderRadius: "var(--radius-sm)",
+                            fontSize: "11px",
+                            fontWeight: "600",
+                            background: "var(--noir)",
+                            color: "var(--gold)",
+                            border: "none",
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          📋 Copier
+                        </button>
+                      )}
+                      {(i.statut === "envoyé" || i.statut === "expiré") && (
+                        <button
+                          onClick={() => {
+                            setSelected(i.id);
+                            renouvelerInvitation();
+                          }}
+                          style={{
+                            padding: "5px 10px",
+                            borderRadius: "var(--radius-sm)",
+                            fontSize: "11px",
+                            fontWeight: "600",
+                            background: "var(--gray-bg)",
+                            color: "var(--gray)",
+                            border: "1px solid var(--white-3)",
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Renouveler
+                        </button>
+                      )}
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {filtres.length === 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "48px",
+              color: "var(--gray)",
+            }}
+          >
+            <div style={{ fontSize: "32px", marginBottom: "8px" }}>🔗</div>
+            <div style={{ fontSize: "13px" }}>Aucune invitation trouvée</div>
           </div>
         )}
       </div>

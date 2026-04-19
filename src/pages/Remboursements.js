@@ -242,7 +242,7 @@ export default function Remboursements() {
   };
 
   return (
-    <div className="page" style={{ padding: "44px 52px" }}>
+    <div className="page" style={{ padding: "32px 36px" }}>
       <div
         style={{
           display: "flex",
@@ -420,13 +420,7 @@ export default function Remboursements() {
       </div>
 
       {/* Layout */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 380px",
-          gap: "20px",
-        }}
-      >
+      <div style={{ display: "block" }}>
         {/* Tableau */}
         <div
           style={{
