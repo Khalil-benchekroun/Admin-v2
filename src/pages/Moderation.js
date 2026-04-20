@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
+import { useDemandes } from "../context/DemandesContext";
 
 const SIGNALEMENTS_DATA = [
   {
@@ -118,16 +120,29 @@ const STATUT_CFG = {
   rejeté: { label: "Rejeté", color: "#6B7280", bg: "#f3f4f6", dot: "#9CA3AF" },
 };
 
-const ACTIONS = [
+const ACTIONS_ALL = [
   "Contacter la boutique",
   "Suspendre temporairement le contenu",
   "Supprimer le contenu",
-  "Bloquer le compte concerné",
   "Escalader à l'admin plateforme",
   "Aucune action requise",
 ];
 
+const ACTIONS_ADMIN_ONLY = [
+  "Bloquer le compte concerné",
+  "Suspendre la boutique",
+];
+
+const DEMANDE_ACTIONS = [
+  "Suspendre la boutique (demande admin)",
+  "Bloquer le compte (demande admin)",
+];
+
 export default function Moderation() {
+  const { admin } = useAuth();
+  const { ajouterDemande } = useDemandes();
+  const role = admin?.role || "admin";
+  const isAdmin = role === "admin";
   const [items, setItems] = useState(SIGNALEMENTS_DATA);
   const [selected, setSelected] = useState(null);
   const [filterType, setFilterType] = useState("all");
@@ -168,6 +183,31 @@ export default function Moderation() {
   };
 
   const appliquerAction = () => {
+    // Intercept admin-only actions for SAV/Ops
+    if (
+      !isAdmin &&
+      (actionChoisie === "Suspendre la boutique (demande admin)" ||
+        actionChoisie === "Bloquer le compte (demande admin)")
+    ) {
+      if (!actionMotif.trim()) {
+        toast.error("Motif obligatoire");
+        return;
+      }
+      const isSuspension = actionChoisie.includes("Suspendre");
+      ajouterDemande({
+        type: isSuspension ? "suspension_boutique" : "blocage_client",
+        cible: item?.cible?.nom,
+        cibleId: item?.cible?.ref,
+        motif: `[Signalement ${item?.id}] ${actionMotif}`,
+        demandePar: admin?.name || role,
+        role,
+      });
+      setShowActionModal(false);
+      setActionChoisie("");
+      setActionMotif("");
+      toast.success("Demande envoyée à l'admin pour validation");
+      return;
+    }
     if (!actionChoisie) {
       toast.error("Sélectionnez une action");
       return;
@@ -834,6 +874,22 @@ export default function Moderation() {
               {item.id} · {item.sujet}
             </p>
             <label style={LBL}>Action corrective *</label>
+            {!isAdmin && (
+              <div
+                style={{
+                  background: "#faeeda",
+                  border: "1px solid #fde68a",
+                  borderRadius: "var(--radius-sm)",
+                  padding: "10px 14px",
+                  fontSize: "12px",
+                  color: "#b7770d",
+                  marginBottom: "12px",
+                }}
+              >
+                ⚑ Suspendre boutique / Bloquer client — demande envoyée à
+                l'admin pour validation.
+              </div>
+            )}
             <div
               style={{
                 display: "flex",
@@ -842,7 +898,10 @@ export default function Moderation() {
                 marginBottom: "16px",
               }}
             >
-              {ACTIONS.map((a) => (
+              {[
+                ...ACTIONS_ALL,
+                ...(isAdmin ? ACTIONS_ADMIN_ONLY : DEMANDE_ACTIONS),
+              ].map((a) => (
                 <button
                   key={a}
                   onClick={() => setActionChoisie(a)}

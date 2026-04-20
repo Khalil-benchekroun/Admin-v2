@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
+import { useDemandes } from "../context/DemandesContext";
 
 // ── Mock Data ──────────────────────────────────────────────
 const CLIENTS_DATA = [
@@ -242,6 +244,10 @@ const COMMANDE_STATUT = {
 };
 
 export default function Clients() {
+  const { admin } = useAuth();
+  const { ajouterDemande } = useDemandes();
+  const role = admin?.role || "admin";
+  const isAdmin = role === "admin";
   const [clients, setClients] = useState(CLIENTS_DATA);
   const [selected, setSelected] = useState(null);
   const [filterStatut, setFilterStatut] = useState("all");
@@ -273,6 +279,25 @@ export default function Clients() {
     panierMoyenGlobal: Math.round(
       clients.reduce((s, c) => s + c.panierMoyen, 0) / clients.length
     ),
+  };
+
+  const demanderBlocage = () => {
+    if (!blockMotif.trim()) {
+      toast.error("Motif obligatoire");
+      return;
+    }
+    const c = clients.find((x) => x.id === selected);
+    ajouterDemande({
+      type: "blocage_client",
+      cible: c?.nom,
+      cibleId: selected,
+      motif: blockMotif,
+      demandePar: admin?.name || role,
+      role,
+    });
+    setBlockMotif("");
+    setShowBlockModal(false);
+    toast.success("Demande de blocage envoyée à l'admin pour validation");
   };
 
   const toggleBlocage = () => {
@@ -879,14 +904,33 @@ export default function Clients() {
                   >
                     Signaler
                   </button>
-                  <button
-                    onClick={() => setShowBlockModal(true)}
-                    style={btnStyle(
-                      client.statut === "bloqué" ? "success" : "error"
-                    )}
-                  >
-                    {client.statut === "bloqué" ? "Débloquer" : "Bloquer"}
-                  </button>
+                  {client.statut === "bloqué" ? (
+                    <button
+                      onClick={() => setShowBlockModal(true)}
+                      style={btnStyle("success")}
+                    >
+                      Débloquer
+                    </button>
+                  ) : isAdmin ? (
+                    <button
+                      onClick={() => setShowBlockModal(true)}
+                      style={btnStyle("error")}
+                    >
+                      Bloquer
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowBlockModal(true)}
+                      style={{
+                        ...btnStyle("error"),
+                        background: "#faeeda",
+                        color: "#b7770d",
+                        borderColor: "#fde68a",
+                      }}
+                    >
+                      ⚑ Demander blocage
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1321,6 +1365,23 @@ export default function Clients() {
             >
               {client.nom} · {client.email}
             </p>
+            {client.statut !== "bloqué" && !isAdmin && (
+              <div
+                style={{
+                  background: "#faeeda",
+                  border: "1px solid #fde68a",
+                  borderRadius: "var(--radius-sm)",
+                  padding: "10px 14px",
+                  fontSize: "12px",
+                  color: "#b7770d",
+                  marginBottom: "16px",
+                }}
+              >
+                ⚑ Votre rôle <strong>{role.toUpperCase()}</strong> ne permet pas
+                de bloquer directement un client. La demande sera soumise à
+                l'Admin Plateforme.
+              </div>
+            )}
             {client.statut !== "bloqué" && (
               <>
                 <div
@@ -1385,16 +1446,26 @@ export default function Clients() {
               >
                 Annuler
               </button>
-              <button
-                onClick={toggleBlocage}
-                style={btnStyle(
-                  client.statut === "bloqué" ? "success" : "error"
-                )}
-              >
-                {client.statut === "bloqué"
-                  ? "Confirmer le déblocage"
-                  : "Confirmer le blocage"}
-              </button>
+              {client.statut === "bloqué" ? (
+                <button onClick={toggleBlocage} style={btnStyle("success")}>
+                  Confirmer le déblocage
+                </button>
+              ) : isAdmin ? (
+                <button onClick={toggleBlocage} style={btnStyle("error")}>
+                  Confirmer le blocage
+                </button>
+              ) : (
+                <button
+                  onClick={demanderBlocage}
+                  style={{
+                    ...btnStyle("error"),
+                    background: "#b7770d",
+                    borderColor: "#b7770d",
+                  }}
+                >
+                  Envoyer la demande à l'admin
+                </button>
+              )}
             </div>
           </div>
         </div>

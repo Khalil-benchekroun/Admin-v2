@@ -1,153 +1,107 @@
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
-// ── Matrice des droits par rôle ────────────────────────────
-//
-// admin : accès total à tout
-// sav   : support opérationnel — pas de finance, paramètres, abonnements, comptes
-// ops   : modération/contrôle — lecture seule sur commandes/clients, pas de finance/paramètres/abonnements/comptes
-//
-const DROITS = {
-  // Pages accessibles
-  pages: {
-    admin: ["*"],
-    sav: [
-      "dashboard",
-      "statistiques",
-      "boutiques",
-      "commandes",
-      "retours",
-      "clients",
-      "sav",
-      "moderation",
-    ],
-    ops: [
-      "dashboard",
-      "statistiques",
-      "boutiques",
-      "commandes",
-      "retours",
-      "clients",
-      "sav",
-      "moderation",
-    ],
-  },
+// Pages accessibles par rôle
+const ACCES = {
+  // superadmin = tout sans exception
+  superadmin: "*",
 
-  // Actions autorisées par page
-  actions: {
-    // Commandes
-    commandes_annuler: { admin: true, sav: true, ops: false },
-    commandes_rembourser: { admin: true, sav: true, ops: false },
-    commandes_modifier: { admin: true, sav: true, ops: true },
-    commandes_bloquer: { admin: true, sav: false, ops: true },
+  // admin = tout sauf pages superadmin-only
+  admin: [
+    "dashboard",
+    "statistiques",
+    "boutiques",
+    "messagerie",
+    "invitations",
+    "onboarding",
+    "abonnements",
+    "produits",
+    "categories",
+    "commandes",
+    "livraisons",
+    "retours",
+    "clients",
+    "parrainage",
+    "finance",
+    "remboursements",
+    "facturation",
+    "reporting",
+    "sav",
+    "litiges",
+    "historique-reclamations",
+    "moderation",
+    "avis",
+    "parametres",
+    "zones",
+    "notifications",
+    "integrations",
+    "audit",
+    "comptes",
+  ],
 
-    // Retours
-    retours_rembourser: { admin: true, sav: true, ops: false },
-    retours_refuser: { admin: true, sav: true, ops: false },
-    retours_avancer: { admin: true, sav: true, ops: true },
-    retours_note: { admin: true, sav: true, ops: true },
+  // sav = opérations client + support
+  sav: [
+    "dashboard",
+    "statistiques",
+    "boutiques",
+    "messagerie",
+    "produits",
+    "categories",
+    "commandes",
+    "livraisons",
+    "retours",
+    "clients",
+    "parrainage",
+    "sav",
+    "historique-reclamations",
+    "moderation",
+    "avis",
+  ],
 
-    // Clients
-    clients_bloquer: { admin: true, sav: true, ops: true },
-    clients_signaler: { admin: true, sav: true, ops: true },
-    clients_note: { admin: true, sav: true, ops: true },
-    clients_rgpd: { admin: true, sav: true, ops: false },
-
-    // Boutiques
-    boutiques_activer: { admin: true, sav: false, ops: true },
-    boutiques_suspendre: { admin: true, sav: false, ops: true },
-    boutiques_message: { admin: true, sav: true, ops: true },
-    boutiques_invitation: { admin: true, sav: false, ops: false },
-
-    // Abonnements
-    abonnements_changer: { admin: true, sav: false, ops: false },
-    abonnements_suspendre: { admin: true, sav: false, ops: false },
-    abonnements_note: { admin: true, sav: false, ops: false },
-
-    // Finance
-    finance_verser: { admin: true, sav: false, ops: false },
-    finance_export: { admin: true, sav: false, ops: false },
-
-    // SAV
-    sav_repondre: { admin: true, sav: true, ops: false },
-    sav_assigner: { admin: true, sav: true, ops: true },
-    sav_statut: { admin: true, sav: true, ops: true },
-    sav_note: { admin: true, sav: true, ops: true },
-
-    // Modération
-    moderation_action: { admin: true, sav: false, ops: true },
-    moderation_note: { admin: true, sav: true, ops: true },
-
-    // Paramètres
-    parametres_modifier: { admin: true, sav: false, ops: false },
-
-    // Comptes
-    comptes_creer: { admin: true, sav: false, ops: false },
-    comptes_modifier: { admin: true, sav: false, ops: false },
-    comptes_desactiver: { admin: true, sav: false, ops: false },
-  },
+  // ops = surveillance + modération uniquement
+  ops: [
+    "dashboard",
+    "statistiques",
+    "boutiques",
+    "produits",
+    "categories",
+    "commandes",
+    "livraisons",
+    "retours",
+    "sav",
+    "historique-reclamations",
+    "moderation",
+    "avis",
+  ],
 };
 
-// ── Hook principal ─────────────────────────────────────────
 export function useRole() {
   const { admin } = useAuth();
   const role = admin?.role || "admin";
 
-  // Vérifie si une action est autorisée pour le rôle courant
-  const peut = (action) => {
-    const droitAction = DROITS.actions[action];
-    if (!droitAction) return true; // action inconnue = permissive par défaut
-    return droitAction[role] === true;
+  const peutAcceder = (page) => {
+    // Superadmin = accès total absolu
+    if (role === "superadmin") return true;
+    // Vérif page superadmin-only
+    if (page === "superadmin-only") return false;
+    const acces = ACCES[role] || [];
+    return acces === "*" || acces.includes(page);
   };
 
-  // Vérifie si une page est accessible
-  const peutVoirPage = (page) => {
-    const pages = DROITS.pages[role];
-    if (!pages) return false;
-    return pages.includes("*") || pages.includes(page);
-  };
+  // Pour la sidebar : superadmin se comporte comme admin (voit tous les menus)
+  const roleForMenu = role === "superadmin" ? "admin" : role;
 
-  // Retourne les pages accessibles pour filtrer le menu
-  const pagesAccessibles = DROITS.pages[role] || [];
+  const estSuperAdmin = role === "superadmin";
+  const estAdmin = role === "admin" || role === "superadmin";
+  const estSAV = role === "sav";
+  const estOps = role === "ops";
 
   return {
     role,
-    peut,
-    peutVoirPage,
-    pagesAccessibles,
-    isAdmin: role === "admin",
-    isSav: role === "sav",
-    isOps: role === "ops",
+    roleForMenu,
+    peutAcceder,
+    estSuperAdmin,
+    estAdmin,
+    estSAV,
+    estOps,
   };
-}
-
-// ── Composant guard visuel ─────────────────────────────────
-// Masque son enfant si l'action n'est pas autorisée
-// Usage : <RoleGuard action="finance_verser"><button>Verser</button></RoleGuard>
-export function RoleGuard({ action, children, fallback = null }) {
-  const { peut } = useRole();
-  if (!peut(action)) return fallback;
-  return children;
-}
-
-// ── Bannière "lecture seule" ───────────────────────────────
-export function LectureSeulee({ show }) {
-  if (!show) return null;
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "6px",
-        fontSize: "11px",
-        fontWeight: "600",
-        color: "#6B7280",
-        background: "#f3f4f6",
-        border: "1px solid #e5e7eb",
-        padding: "4px 12px",
-        borderRadius: "20px",
-      }}
-    >
-      <span style={{ fontSize: "10px" }}>🔒</span> Lecture seule
-    </div>
-  );
 }

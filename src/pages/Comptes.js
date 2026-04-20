@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useRole } from "../hooks/useRole";
 
 const COMPTES_DATA = [
   {
     id: "ADM-001",
     nom: "Khalil B.",
-    email: "khalil@livrr.fr",
-    role: "admin",
+    email: "khalil.superadmin@livrr.fr",
+    role: "superadmin",
     statut: "actif",
     dateCreation: "01/01/2026",
     derniereConnexion: "Aujourd'hui 14:32",
@@ -60,16 +61,28 @@ const COMPTES_DATA = [
 ];
 
 const ROLE_CFG = {
+  superadmin: {
+    label: "Super Admin",
+    color: "#C9A96E",
+    bg: "rgba(201,169,110,0.15)",
+    droits: [
+      "Accès total plateforme",
+      "Gestion des comptes Admin",
+      "Journal d'audit complet (tous rôles)",
+      "Configuration des zones d'expansion",
+      "Paramètres globaux plateforme",
+    ],
+  },
   admin: {
     label: "Admin Plateforme",
-    color: "#C9A96E",
-    bg: "rgba(201,169,110,0.1)",
+    color: "#8B5CF6",
+    bg: "rgba(139,92,246,0.1)",
     droits: [
-      "Accès total",
-      "Paramètres globaux",
+      "Accès opérationnel complet",
       "Finance & commissions",
-      "Gestion des comptes",
-      "Arbitrage tous statuts",
+      "Arbitrage et litiges",
+      "Gestion SAV/Ops",
+      "Journal d'audit SAV/Ops uniquement",
     ],
   },
   sav: {
@@ -109,6 +122,13 @@ const STATUT_CFG = {
 };
 
 export default function Comptes() {
+  const { estSuperAdmin } = useRole();
+  // Rôles disponibles selon qui est connecté
+  // SuperAdmin peut créer des Admins. Admin peut créer uniquement SAV/Ops.
+  const rolesDisponibles = estSuperAdmin
+    ? ["superadmin", "admin", "sav", "ops"]
+    : ["sav", "ops"];
+
   const [comptes, setComptes] = useState(COMPTES_DATA);
   const [selected, setSelected] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -133,6 +153,7 @@ export default function Comptes() {
   const stats = {
     total: comptes.length,
     actifs: comptes.filter((c) => c.statut === "actif").length,
+    superadmins: comptes.filter((c) => c.role === "superadmin").length,
     admins: comptes.filter((c) => c.role === "admin").length,
     sav: comptes.filter((c) => c.role === "sav").length,
     ops: comptes.filter((c) => c.role === "ops").length,
@@ -170,6 +191,14 @@ export default function Comptes() {
       toast.error("Choisissez un rôle");
       return;
     }
+    // Admin ne peut pas modifier le rôle d'un autre admin ou superadmin
+    if (
+      !estSuperAdmin &&
+      (compte?.role === "admin" || compte?.role === "superadmin")
+    ) {
+      toast.error("Seul le Super Admin peut modifier un compte Admin");
+      return;
+    }
     setComptes((prev) =>
       prev.map((c) => (c.id === selected ? { ...c, role: newRole } : c))
     );
@@ -179,6 +208,14 @@ export default function Comptes() {
   };
 
   const toggleStatut = () => {
+    // Admin ne peut pas désactiver un compte Admin ou SuperAdmin
+    if (
+      !estSuperAdmin &&
+      (compte?.role === "admin" || compte?.role === "superadmin")
+    ) {
+      toast.error("Seul le Super Admin peut désactiver un compte Admin");
+      return;
+    }
     const newStatut = compte.statut === "actif" ? "inactif" : "actif";
     setComptes((prev) =>
       prev.map((c) => (c.id === selected ? { ...c, statut: newStatut } : c))
@@ -873,37 +910,40 @@ export default function Comptes() {
                 marginBottom: "24px",
               }}
             >
-              {Object.entries(ROLE_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setForm({ ...form, role: k })}
-                  style={{
-                    textAlign: "left",
-                    padding: "12px 16px",
-                    borderRadius: "var(--radius-md)",
-                    cursor: "pointer",
-                    border: `2px solid ${
-                      form.role === k ? v.color : "var(--white-3)"
-                    }`,
-                    background: form.role === k ? v.bg : "transparent",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  <div
+              {rolesDisponibles.map((k) => {
+                const v = ROLE_CFG[k];
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setForm({ ...form, role: k })}
                     style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      color: form.role === k ? v.color : "var(--noir)",
-                      marginBottom: "3px",
+                      textAlign: "left",
+                      padding: "12px 16px",
+                      borderRadius: "var(--radius-md)",
+                      cursor: "pointer",
+                      border: `2px solid ${
+                        form.role === k ? v.color : "var(--white-3)"
+                      }`,
+                      background: form.role === k ? v.bg : "transparent",
+                      transition: "all 0.15s",
                     }}
                   >
-                    {v.label}
-                  </div>
-                  <div style={{ fontSize: "11px", color: "var(--gray)" }}>
-                    {v.droits[0]} · {v.droits[1]}
-                  </div>
-                </button>
-              ))}
+                    <div
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        color: form.role === k ? v.color : "var(--noir)",
+                        marginBottom: "3px",
+                      }}
+                    >
+                      {v.label}
+                    </div>
+                    <div style={{ fontSize: "11px", color: "var(--gray)" }}>
+                      {v.droits[0]} · {v.droits[1]}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
             <div
               style={{
@@ -960,33 +1000,36 @@ export default function Comptes() {
                 marginBottom: "24px",
               }}
             >
-              {Object.entries(ROLE_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setNewRole(k)}
-                  style={{
-                    textAlign: "left",
-                    padding: "12px 16px",
-                    borderRadius: "var(--radius-md)",
-                    cursor: "pointer",
-                    border: `2px solid ${
-                      newRole === k ? v.color : "var(--white-3)"
-                    }`,
-                    background: newRole === k ? v.bg : "transparent",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  <div
+              {rolesDisponibles.map((k) => {
+                const v = ROLE_CFG[k];
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setNewRole(k)}
                     style={{
-                      fontSize: "13px",
-                      fontWeight: "600",
-                      color: newRole === k ? v.color : "var(--noir)",
+                      textAlign: "left",
+                      padding: "12px 16px",
+                      borderRadius: "var(--radius-md)",
+                      cursor: "pointer",
+                      border: `2px solid ${
+                        newRole === k ? v.color : "var(--white-3)"
+                      }`,
+                      background: newRole === k ? v.bg : "transparent",
+                      transition: "all 0.15s",
                     }}
                   >
-                    {v.label}
-                  </div>
-                </button>
-              ))}
+                    <div
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        color: newRole === k ? v.color : "var(--noir)",
+                      }}
+                    >
+                      {v.label}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
             <div
               style={{

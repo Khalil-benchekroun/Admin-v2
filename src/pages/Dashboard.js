@@ -11,6 +11,7 @@ import {
   Legend,
 } from "recharts";
 import { useAuth } from "../context/AuthContext";
+import { useDemandes } from "../context/DemandesContext";
 
 // ── Données ────────────────────────────────────────────────
 const CA_DATA = [
@@ -259,6 +260,9 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const { admin } = useAuth();
+  const { demandesEnAttente, validerDemande, refuserDemande } = useDemandes();
+  const role = admin?.role || "admin";
+  const isAdmin = role === "admin";
   const [tick, setTick] = useState(0);
   const [alertes, setAlertes] = useState(ALERTES_INIT);
   const [commandesLive, setCommandesLive] = useState(COMMANDES_LIVE_INIT);
@@ -349,6 +353,155 @@ export default function Dashboard() {
           >
             Voir les litiges →
           </Link>
+        </div>
+      )}
+
+      {/* ── Demandes en attente (admin seulement) ── */}
+      {isAdmin && demandesEnAttente.length > 0 && (
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: "var(--radius-lg)",
+            border: "2px solid #fde68a",
+            marginBottom: "20px",
+            overflow: "hidden",
+            boxShadow: "0 4px 20px rgba(201,169,110,0.15)",
+          }}
+        >
+          <div
+            style={{
+              padding: "12px 20px",
+              background: "#fffbeb",
+              borderBottom: "1px solid #fde68a",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <span style={{ fontSize: "16px" }}>⚑</span>
+            <span
+              style={{ fontSize: "13px", fontWeight: "700", color: "#b7770d" }}
+            >
+              {demandesEnAttente.length} demande
+              {demandesEnAttente.length > 1 ? "s" : ""} en attente de validation
+            </span>
+            <span style={{ fontSize: "12px", color: "#b7770d", opacity: 0.7 }}>
+              — Suspension boutique ou blocage client demandés par SAV/Ops
+            </span>
+          </div>
+          {demandesEnAttente.map((d) => (
+            <div
+              key={d.id}
+              style={{
+                padding: "14px 20px",
+                borderBottom: "1px solid #fef3c7",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "16px",
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    alignItems: "center",
+                    marginBottom: "4px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontFamily: "monospace",
+                      fontWeight: "700",
+                      color: "#b7770d",
+                    }}
+                  >
+                    {d.id}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      padding: "2px 8px",
+                      borderRadius: "10px",
+                      background:
+                        d.type === "suspension_boutique"
+                          ? "#faeeda"
+                          : "#fef2f2",
+                      color:
+                        d.type === "suspension_boutique"
+                          ? "#b7770d"
+                          : "#c0392b",
+                    }}
+                  >
+                    {d.type === "suspension_boutique"
+                      ? "🏪 Suspension boutique"
+                      : "🔒 Blocage client"}
+                  </span>
+                  <span style={{ fontSize: "11px", color: "var(--gray)" }}>
+                    demandé par <strong>{d.demandePar}</strong> (
+                    {d.role.toUpperCase()})
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    marginBottom: "3px",
+                  }}
+                >
+                  {d.cible}
+                </div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "var(--gray)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  « {d.motif} »
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                <button
+                  onClick={() => {
+                    refuserDemande(d.id);
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    background: "transparent",
+                    color: "var(--gray)",
+                    border: "1.5px solid var(--white-3)",
+                    cursor: "pointer",
+                  }}
+                >
+                  Refuser
+                </button>
+                <button
+                  onClick={() => {
+                    validerDemande(d.id);
+                  }}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    background:
+                      d.type === "suspension_boutique" ? "#b7770d" : "#c0392b",
+                    color: "#fff",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✓ Valider
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

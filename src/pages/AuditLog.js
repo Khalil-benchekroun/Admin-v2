@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRole } from "../hooks/useRole";
 
 // ── Mock Data ──────────────────────────────────────────────
 const LOGS_DATA = [
@@ -288,7 +289,12 @@ const MODULES = [
 ];
 
 export default function AuditLog() {
-  const [logs] = useState(LOGS_DATA);
+  const { role, estSuperAdmin } = useRole();
+  // SuperAdmin voit tout. Admin voit uniquement SAV/Ops. SAV/Ops n'ont pas accès.
+  const logsVisibles = estSuperAdmin
+    ? LOGS_DATA
+    : LOGS_DATA.filter((l) => l.role !== "admin" && l.role !== "superadmin");
+  const [logs] = useState(logsVisibles);
   const [filterRole, setFilterRole] = useState("all");
   const [filterModule, setFilterModule] = useState("all");
   const [filterActeur, setFilterActeur] = useState("all");

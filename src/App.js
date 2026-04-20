@@ -8,10 +8,14 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { DemandesProvider } from "./context/DemandesContext";
+import { useRole } from "./hooks/useRole";
 import "./index.css";
 
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import AccesRefuse from "./pages/AccesRefuse";
 import Dashboard from "./pages/Dashboard";
 import Boutiques from "./pages/Boutiques";
 import Invitations from "./pages/Invitations";
@@ -34,6 +38,7 @@ import Parrainage from "./pages/Parrainage";
 import Avis from "./pages/Avis";
 import Integrations from "./pages/Integrations";
 import Litiges from "./pages/Litiges";
+import Remboursements from "./pages/Remboursements";
 import OnboardingAdmin from "./pages/OnboardingAdmin";
 import Messagerie from "./pages/Messagerie";
 import Facturation from "./pages/Facturation";
@@ -41,7 +46,6 @@ import Reporting from "./pages/Reporting";
 import CategoriesAdmin from "./pages/CategoriesAdmin";
 import HistoriqueReclamations from "./pages/HistoriqueReclamations";
 import TutorialAdmin from "./pages/TutorialAdmin";
-import Remboursements from "./pages/Remboursements";
 
 // ── Theme Context ──
 export const ThemeContext = createContext({ dark: false, toggle: () => {} });
@@ -91,6 +95,7 @@ function PageTransition({ children }) {
   );
 }
 
+// ── Private route (authentification) ──
 function PrivateRoute({ children }) {
   const { admin, loading } = useAuth();
   if (loading)
@@ -119,6 +124,16 @@ function PrivateRoute({ children }) {
   return admin ? children : <Navigate to="/login" />;
 }
 
+// ── Role guard (autorisation) ──
+function RoleRoute({ page, children }) {
+  const { peutAcceder, role } = useRole();
+  if (!peutAcceder(page)) {
+    return <AccesRefuse role={role} />;
+  }
+  return children;
+}
+
+// ── Layout avec sidebar ──
 function AppLayout({ children }) {
   return (
     <div
@@ -144,9 +159,19 @@ function AppLayout({ children }) {
   );
 }
 
+// ── Wrapper : authentifié + layout ──
 const PR = ({ children }) => (
   <PrivateRoute>
     <AppLayout>{children}</AppLayout>
+  </PrivateRoute>
+);
+
+// ── Wrapper : authentifié + layout + rôle ──
+const PRR = ({ page, children }) => (
+  <PrivateRoute>
+    <AppLayout>
+      <RoleRoute page={page}>{children}</RoleRoute>
+    </AppLayout>
   </PrivateRoute>
 );
 
@@ -154,256 +179,267 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                fontFamily: "DM Sans, sans-serif",
-                fontSize: "14px",
-                borderRadius: "12px",
-                zIndex: 9999,
-              },
-            }}
-          />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <PR>
-                  <Dashboard />
-                </PR>
-              }
+        <DemandesProvider>
+          <Router>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                style: {
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: "14px",
+                  borderRadius: "12px",
+                  zIndex: 9999,
+                },
+              }}
             />
-            <Route
-              path="/statistiques"
-              element={
-                <PR>
-                  <Stats />
-                </PR>
-              }
-            />
-            <Route
-              path="/boutiques"
-              element={
-                <PR>
-                  <Boutiques />
-                </PR>
-              }
-            />
-            <Route
-              path="/invitations"
-              element={
-                <PR>
-                  <Invitations />
-                </PR>
-              }
-            />
-            <Route
-              path="/abonnements"
-              element={
-                <PR>
-                  <Abonnements />
-                </PR>
-              }
-            />
-            <Route
-              path="/commandes"
-              element={
-                <PR>
-                  <Commandes />
-                </PR>
-              }
-            />
-            <Route
-              path="/retours"
-              element={
-                <PR>
-                  <Retours />
-                </PR>
-              }
-            />
-            <Route
-              path="/livraisons"
-              element={
-                <PR>
-                  <Livraisons />
-                </PR>
-              }
-            />
-            <Route
-              path="/clients"
-              element={
-                <PR>
-                  <Clients />
-                </PR>
-              }
-            />
-            <Route
-              path="/finance"
-              element={
-                <PR>
-                  <Finance />
-                </PR>
-              }
-            />
-            <Route
-              path="/sav"
-              element={
-                <PR>
-                  <SAV />
-                </PR>
-              }
-            />
-            <Route
-              path="/moderation"
-              element={
-                <PR>
-                  <Moderation />
-                </PR>
-              }
-            />
-            <Route
-              path="/produits"
-              element={
-                <PR>
-                  <Produits />
-                </PR>
-              }
-            />
-            <Route
-              path="/parametres"
-              element={
-                <PR>
-                  <Parametres />
-                </PR>
-              }
-            />
-            <Route
-              path="/comptes"
-              element={
-                <PR>
-                  <Comptes />
-                </PR>
-              }
-            />
-            <Route
-              path="/zones"
-              element={
-                <PR>
-                  <ZoneService />
-                </PR>
-              }
-            />
-            <Route
-              path="/notifications"
-              element={
-                <PR>
-                  <Notifications />
-                </PR>
-              }
-            />
-            <Route
-              path="/audit"
-              element={
-                <PR>
-                  <AuditLog />
-                </PR>
-              }
-            />
-            <Route
-              path="/parrainage"
-              element={
-                <PR>
-                  <Parrainage />
-                </PR>
-              }
-            />
-            <Route
-              path="/avis"
-              element={
-                <PR>
-                  <Avis />
-                </PR>
-              }
-            />
-            <Route
-              path="/integrations"
-              element={
-                <PR>
-                  <Integrations />
-                </PR>
-              }
-            />
-            <Route
-              path="/litiges"
-              element={
-                <PR>
-                  <Litiges />
-                </PR>
-              }
-            />
-            <Route
-              path="/onboarding"
-              element={
-                <PR>
-                  <OnboardingAdmin />
-                </PR>
-              }
-            />
-            <Route
-              path="/messagerie"
-              element={
-                <PR>
-                  <Messagerie />
-                </PR>
-              }
-            />
-            <Route
-              path="/facturation"
-              element={
-                <PR>
-                  <Facturation />
-                </PR>
-              }
-            />
-            <Route
-              path="/reporting"
-              element={
-                <PR>
-                  <Reporting />
-                </PR>
-              }
-            />
-            <Route
-              path="/remboursements"
-              element={
-                <PR>
-                  <Remboursements />
-                </PR>
-              }
-            />
-            <Route
-              path="/categories"
-              element={
-                <PR>
-                  <CategoriesAdmin />
-                </PR>
-              }
-            />
-            <Route
-              path="/historique-reclamations"
-              element={
-                <PR>
-                  <HistoriqueReclamations />
-                </PR>
-              }
-            />
-            <Route path="/tutorial" element={<TutorialAdmin />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </Router>
+            <Routes>
+              {/* Pages publiques */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/tutorial" element={<TutorialAdmin />} />
+
+              {/* Pages accessibles à tous les rôles */}
+              <Route
+                path="/"
+                element={
+                  <PR>
+                    <Dashboard />
+                  </PR>
+                }
+              />
+              <Route
+                path="/statistiques"
+                element={
+                  <PR>
+                    <Stats />
+                  </PR>
+                }
+              />
+              <Route
+                path="/boutiques"
+                element={
+                  <PR>
+                    <Boutiques />
+                  </PR>
+                }
+              />
+              <Route
+                path="/messagerie"
+                element={
+                  <PRR page="messagerie">
+                    <Messagerie />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/produits"
+                element={
+                  <PR>
+                    <Produits />
+                  </PR>
+                }
+              />
+              <Route
+                path="/categories"
+                element={
+                  <PR>
+                    <CategoriesAdmin />
+                  </PR>
+                }
+              />
+              <Route
+                path="/commandes"
+                element={
+                  <PR>
+                    <Commandes />
+                  </PR>
+                }
+              />
+              <Route
+                path="/livraisons"
+                element={
+                  <PR>
+                    <Livraisons />
+                  </PR>
+                }
+              />
+              <Route
+                path="/retours"
+                element={
+                  <PR>
+                    <Retours />
+                  </PR>
+                }
+              />
+              <Route
+                path="/sav"
+                element={
+                  <PR>
+                    <SAV />
+                  </PR>
+                }
+              />
+              <Route
+                path="/historique-reclamations"
+                element={
+                  <PR>
+                    <HistoriqueReclamations />
+                  </PR>
+                }
+              />
+              <Route
+                path="/moderation"
+                element={
+                  <PR>
+                    <Moderation />
+                  </PR>
+                }
+              />
+              <Route
+                path="/avis"
+                element={
+                  <PR>
+                    <Avis />
+                  </PR>
+                }
+              />
+
+              {/* Pages SAV uniquement (pas Ops) */}
+              <Route
+                path="/clients"
+                element={
+                  <PRR page="clients">
+                    <Clients />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/parrainage"
+                element={
+                  <PRR page="parrainage">
+                    <Parrainage />
+                  </PRR>
+                }
+              />
+
+              {/* Pages Admin uniquement */}
+              <Route
+                path="/invitations"
+                element={
+                  <PRR page="invitations">
+                    <Invitations />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/onboarding"
+                element={
+                  <PRR page="onboarding">
+                    <OnboardingAdmin />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/abonnements"
+                element={
+                  <PRR page="abonnements">
+                    <Abonnements />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/finance"
+                element={
+                  <PRR page="finance">
+                    <Finance />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/remboursements"
+                element={
+                  <PRR page="remboursements">
+                    <Remboursements />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/facturation"
+                element={
+                  <PRR page="facturation">
+                    <Facturation />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/reporting"
+                element={
+                  <PRR page="reporting">
+                    <Reporting />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/litiges"
+                element={
+                  <PRR page="litiges">
+                    <Litiges />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/parametres"
+                element={
+                  <PRR page="parametres">
+                    <Parametres />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/zones"
+                element={
+                  <PRR page="zones">
+                    <ZoneService />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <PRR page="notifications">
+                    <Notifications />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/integrations"
+                element={
+                  <PRR page="integrations">
+                    <Integrations />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/audit"
+                element={
+                  <PRR page="audit">
+                    <AuditLog />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/comptes"
+                element={
+                  <PRR page="comptes">
+                    <Comptes />
+                  </PRR>
+                }
+              />
+
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+        </DemandesProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useDemandes } from "../context/DemandesContext";
+import { useRole } from "../hooks/useRole";
 
 const MENU = [
   {
@@ -96,7 +98,8 @@ const MENU = [
 ];
 
 const ROLE_CONFIG = {
-  admin: { label: "Admin Plateforme", color: "var(--gold)", dot: "#C9A96E" },
+  superadmin: { label: "Super Admin", color: "var(--gold)", dot: "#C9A96E" },
+  admin: { label: "Admin Plateforme", color: "#8B5CF6", dot: "#8B5CF6" },
   sav: { label: "SAV / Support", color: "#3B82F6", dot: "#3B82F6" },
   ops: { label: "Ops / Modération", color: "#10B981", dot: "#10B981" },
 };
@@ -112,12 +115,22 @@ export default function Sidebar() {
   const [mounted, setMounted] = useState(false);
 
   const role = admin?.role || "admin";
+  const { demandesEnAttente } = useDemandes();
+  const isAdmin = role === "admin";
+  const demandesBoutique = demandesEnAttente.filter(
+    (d) => d.type === "suspension_boutique"
+  ).length;
+  const demandesClient = demandesEnAttente.filter(
+    (d) => d.type === "blocage_client"
+  ).length;
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
 
-  const menuVisible = MENU.filter((g) => peutAcceder(g.roles, role))
+  // superadmin uses "admin" role for menu display (sees all menus)
+  const menuRole = roleForMenu || role;
+  const menuVisible = MENU.filter((g) => peutAcceder(g.roles, menuRole))
     .map((g) => ({
       ...g,
-      subItems: g.subItems.filter((s) => peutAcceder(s.roles, role)),
+      subItems: g.subItems.filter((s) => peutAcceder(s.roles, menuRole)),
     }))
     .filter((g) => g.subItems.length > 0);
 
@@ -143,7 +156,7 @@ export default function Sidebar() {
   }, []);
 
   const roleRgb =
-    role === "admin"
+    role === "admin" || role === "superadmin"
       ? "201,169,110"
       : role === "sav"
       ? "59,130,246"
@@ -289,7 +302,7 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
-          {role !== "admin" && (
+          {(role === "sav" || role === "ops") && (
             <div
               style={{
                 marginTop: "10px",
@@ -385,6 +398,38 @@ export default function Sidebar() {
                           {sub.badge}
                         </span>
                       )}
+                      {sub.path === "/boutiques" &&
+                        isAdmin &&
+                        demandesBoutique > 0 && (
+                          <span
+                            style={{
+                              background: "#b7770d",
+                              color: "#fff",
+                              borderRadius: "20px",
+                              padding: "1px 6px",
+                              fontSize: "9px",
+                              fontWeight: "800",
+                            }}
+                          >
+                            {demandesBoutique}
+                          </span>
+                        )}
+                      {sub.path === "/clients" &&
+                        isAdmin &&
+                        demandesClient > 0 && (
+                          <span
+                            style={{
+                              background: "#c0392b",
+                              color: "#fff",
+                              borderRadius: "20px",
+                              padding: "1px 6px",
+                              fontSize: "9px",
+                              fontWeight: "800",
+                            }}
+                          >
+                            {demandesClient}
+                          </span>
+                        )}
                     </NavLink>
                   ))}
                 </div>

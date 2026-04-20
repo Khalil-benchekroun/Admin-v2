@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
+import { useDemandes } from "../context/DemandesContext";
 
 const BOUTIQUES = [
   {
@@ -91,6 +93,11 @@ const STATUT_CFG = {
 };
 
 export default function Boutiques() {
+  const { admin } = useAuth();
+  const { ajouterDemande } = useDemandes();
+  const role = admin?.role || "admin";
+  const isAdmin = role === "admin";
+
   const [boutiques, setBoutiques] = useState(BOUTIQUES);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
@@ -98,6 +105,9 @@ export default function Boutiques() {
   const [showMsgModal, setShowMsgModal] = useState(false);
   const [msgText, setMsgText] = useState("");
   const [msgTarget, setMsgTarget] = useState(null);
+  const [showDemandeModal, setShowDemandeModal] = useState(false);
+  const [demandeMotif, setDemandeMotif] = useState("");
+  const [demandeCible, setDemandeCible] = useState(null);
 
   const filtered = boutiques.filter(
     (b) =>
@@ -121,6 +131,31 @@ export default function Boutiques() {
     });
     if (selected?.id === id)
       setSelected((prev) => ({ ...prev, statut: newStatut }));
+  };
+
+  const demanderSuspension = () => {
+    if (!demandeMotif.trim()) {
+      toast.error("Motif obligatoire");
+      return;
+    }
+    const b = boutiques.find((x) => x.id === demandeCible);
+    ajouterDemande({
+      type: "suspension_boutique",
+      cible: b?.name,
+      cibleId: demandeCible,
+      motif: demandeMotif,
+      demandePar: admin?.name || role,
+      role,
+    });
+    setShowDemandeModal(false);
+    setDemandeMotif("");
+    setDemandeCible(null);
+    toast.success("Demande de suspension envoyée à l'admin pour validation");
+  };
+
+  const ouvrirDemandeSuspension = (id) => {
+    setDemandeCible(id);
+    setShowDemandeModal(true);
   };
 
   const envoyerMessage = () => {
@@ -324,20 +359,34 @@ export default function Boutiques() {
                             </button>
                           </>
                         )}
-                        {b.statut === "active" && (
-                          <button
-                            className="btn-outline"
-                            style={{
-                              fontSize: "11px",
-                              padding: "5px 10px",
-                              color: "var(--warning)",
-                              borderColor: "var(--warning)",
-                            }}
-                            onClick={() => changeStatut(b.id, "suspended")}
-                          >
-                            Suspendre
-                          </button>
-                        )}
+                        {b.statut === "active" &&
+                          (isAdmin ? (
+                            <button
+                              className="btn-outline"
+                              style={{
+                                fontSize: "11px",
+                                padding: "5px 10px",
+                                color: "var(--warning)",
+                                borderColor: "var(--warning)",
+                              }}
+                              onClick={() => changeStatut(b.id, "suspended")}
+                            >
+                              Suspendre
+                            </button>
+                          ) : (
+                            <button
+                              className="btn-outline"
+                              style={{
+                                fontSize: "11px",
+                                padding: "5px 10px",
+                                color: "#b7770d",
+                                borderColor: "#b7770d",
+                              }}
+                              onClick={() => ouvrirDemandeSuspension(b.id)}
+                            >
+                              ⚑ Demander suspension
+                            </button>
+                          ))}
                         {(b.statut === "inactive" ||
                           b.statut === "suspended") && (
                           <button
@@ -474,15 +523,33 @@ export default function Boutiques() {
               >
                 Envoyer un message
               </button>
-              {selected.statut === "active" && (
-                <button
-                  className="btn-danger"
-                  style={{ flex: 1, fontSize: "12px" }}
-                  onClick={() => changeStatut(selected.id, "suspended")}
-                >
-                  Suspendre
-                </button>
-              )}
+              {selected.statut === "active" &&
+                (isAdmin ? (
+                  <button
+                    className="btn-danger"
+                    style={{ flex: 1, fontSize: "12px" }}
+                    onClick={() => changeStatut(selected.id, "suspended")}
+                  >
+                    Suspendre
+                  </button>
+                ) : (
+                  <button
+                    style={{
+                      flex: 1,
+                      fontSize: "12px",
+                      padding: "9px",
+                      borderRadius: "var(--radius-sm)",
+                      fontWeight: "600",
+                      background: "#faeeda",
+                      color: "#b7770d",
+                      border: "1.5px solid #fde68a",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => ouvrirDemandeSuspension(selected.id)}
+                  >
+                    ⚑ Demander suspension
+                  </button>
+                ))}
               {selected.statut !== "active" && (
                 <button
                   className="btn-success"
@@ -498,6 +565,141 @@ export default function Boutiques() {
       </div>
 
       {/* MODAL MESSAGE */}
+      {/* ── Modal demande suspension (SAV/Ops) ── */}
+      {showDemandeModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(10,10,15,0.55)",
+            zIndex: 200,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClick={() => setShowDemandeModal(false)}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "var(--radius-lg)",
+              padding: "32px",
+              width: "480px",
+              boxShadow: "var(--shadow-lg)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "26px",
+                fontWeight: "300",
+                marginBottom: "6px",
+              }}
+            >
+              Demande de suspension
+            </h2>
+            <p
+              style={{
+                fontSize: "13px",
+                color: "var(--gray)",
+                marginBottom: "16px",
+              }}
+            >
+              {boutiques.find((b) => b.id === demandeCible)?.name} — La
+              suspension sera appliquée uniquement après validation par l'Admin
+              Plateforme.
+            </p>
+            <div
+              style={{
+                background: "#faeeda",
+                border: "1px solid #fde68a",
+                borderRadius: "var(--radius-sm)",
+                padding: "10px 14px",
+                fontSize: "12px",
+                color: "#b7770d",
+                marginBottom: "16px",
+              }}
+            >
+              ⚑ Votre rôle <strong>{role.toUpperCase()}</strong> ne permet pas
+              de suspendre directement une boutique. Cette demande sera soumise
+              à l'Admin Plateforme.
+            </div>
+            <label
+              style={{
+                display: "block",
+                fontSize: "11px",
+                fontWeight: "700",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--gray)",
+                marginBottom: "8px",
+              }}
+            >
+              Motif de la demande *
+            </label>
+            <textarea
+              value={demandeMotif}
+              onChange={(e) => setDemandeMotif(e.target.value)}
+              placeholder="Expliquez pourquoi cette boutique doit être suspendue…"
+              rows={4}
+              autoFocus
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1.5px solid var(--white-3)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: "13px",
+                resize: "none",
+                outline: "none",
+                marginBottom: "20px",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                onClick={() => {
+                  setShowDemandeModal(false);
+                  setDemandeMotif("");
+                }}
+                style={{
+                  padding: "9px 16px",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  background: "transparent",
+                  color: "var(--gray)",
+                  border: "1.5px solid var(--white-3)",
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={demanderSuspension}
+                style={{
+                  padding: "9px 16px",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  background: "#b7770d",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Envoyer la demande à l'admin
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showMsgModal && (
         <div
           style={{

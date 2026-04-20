@@ -1,21 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
-
 const SESSION_KEY = "livrr_admin_session";
 
 export function AuthProvider({ children }) {
   const [admin, setAdmin] = useState(null);
-  const [loading, setLoading] = useState(true); // true au démarrage pour lire le localStorage
+  const [loading, setLoading] = useState(true);
 
-  // ── Au démarrage : restaurer la session depuis localStorage ──
   useEffect(() => {
     try {
       const saved = localStorage.getItem(SESSION_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setAdmin(parsed);
-      }
+      if (saved) setAdmin(JSON.parse(saved));
     } catch (e) {
       localStorage.removeItem(SESSION_KEY);
     }
@@ -25,20 +20,20 @@ export function AuthProvider({ children }) {
   const login = (email, password) => {
     setLoading(true);
     setTimeout(() => {
-      // Détecte le rôle selon l'email
+      // Détection du rôle selon l'email — ordre important
       let role = "admin";
-      if (email.includes("sav")) role = "sav";
+      if (email.includes("superadmin")) role = "superadmin";
+      else if (email.includes("sav")) role = "sav";
       else if (email.includes("ops")) role = "ops";
 
       const NOMS = {
-        admin: "Khalil B.",
+        superadmin: "Khalil B.",
+        admin: "Admin",
         sav: "Marie (SAV)",
         ops: "Paul (Ops)",
       };
 
-      const session = { email, name: NOMS[role], role };
-
-      // Persister en localStorage
+      const session = { email, name: NOMS[role] || email.split("@")[0], role };
       localStorage.setItem(SESSION_KEY, JSON.stringify(session));
       setAdmin(session);
       setLoading(false);
