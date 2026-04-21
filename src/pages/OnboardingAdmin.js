@@ -558,6 +558,86 @@ export default function OnboardingAdmin() {
                   >
                     Refuser
                   </button>
+                  {dos.statut === "en_cours" && !dos.checklist.contrat && (
+                    <button
+                      onClick={() => {
+                        setDossiers((prev) =>
+                          prev.map((d) =>
+                            d.id === selected
+                              ? {
+                                  ...d,
+                                  statut: "en_attente_signature",
+                                  historique: [
+                                    ...d.historique,
+                                    {
+                                      action: "Contrat envoyé via DocuSign",
+                                      par: "Khalil B.",
+                                      heure: new Date().toLocaleTimeString(
+                                        "fr-FR",
+                                        { hour: "2-digit", minute: "2-digit" }
+                                      ),
+                                      date: new Date().toLocaleDateString(
+                                        "fr-FR"
+                                      ),
+                                    },
+                                  ],
+                                }
+                              : d
+                          )
+                        );
+                        toast.success(
+                          "📧 Contrat DocuSign envoyé à " + dos.responsable
+                        );
+                      }}
+                      style={{
+                        ...bStyle("ghost"),
+                        borderColor: "#185fa5",
+                        color: "#185fa5",
+                      }}
+                    >
+                      📝 Envoyer contrat DocuSign
+                    </button>
+                  )}
+                  {dos.statut === "en_attente_signature" && (
+                    <button
+                      onClick={() => {
+                        setDossiers((prev) =>
+                          prev.map((d) =>
+                            d.id === selected
+                              ? {
+                                  ...d,
+                                  checklist: { ...d.checklist, contrat: true },
+                                  historique: [
+                                    ...d.historique,
+                                    {
+                                      action:
+                                        "Contrat signé ✓ — DocuSign confirmé",
+                                      par: "Système",
+                                      heure: new Date().toLocaleTimeString(
+                                        "fr-FR",
+                                        { hour: "2-digit", minute: "2-digit" }
+                                      ),
+                                      date: new Date().toLocaleDateString(
+                                        "fr-FR"
+                                      ),
+                                    },
+                                  ],
+                                  statut: "en_cours",
+                                }
+                              : d
+                          )
+                        );
+                        toast.success("✅ Contrat signé confirmé");
+                      }}
+                      style={{
+                        ...bStyle("ghost"),
+                        borderColor: "#2e8b57",
+                        color: "#2e8b57",
+                      }}
+                    >
+                      ✓ Marquer contrat signé
+                    </button>
+                  )}
                   <button
                     onClick={activerBoutique}
                     style={{
@@ -566,7 +646,7 @@ export default function OnboardingAdmin() {
                     }}
                   >
                     {checklistComplete(dos.checklist)
-                      ? "✓ Activer la boutique"
+                      ? "🚀 Activer la boutique"
                       : "Compléter le dossier"}
                   </button>
                 </div>

@@ -87,6 +87,49 @@ const DATA_FIDELITE = [
   { name: "Gold", value: 25, color: "#C9A96E" },
 ];
 
+const DATA_PERF_LIVRAISON = [
+  {
+    coursier: "Karim M. (Coursier.fr)",
+    livraisons: 89,
+    tauxSucces: 97,
+    delaiMoyen: "41 min",
+    incidents: 2,
+    note: 4.9,
+  },
+  {
+    coursier: "Thomas R. (Top Chrono)",
+    livraisons: 67,
+    tauxSucces: 94,
+    delaiMoyen: "48 min",
+    incidents: 4,
+    note: 4.7,
+  },
+  {
+    coursier: "Yacine B. (Coursier.fr)",
+    livraisons: 54,
+    tauxSucces: 96,
+    delaiMoyen: "44 min",
+    incidents: 2,
+    note: 4.8,
+  },
+  {
+    coursier: "Mehdi S. (Top Chrono)",
+    livraisons: 42,
+    tauxSucces: 90,
+    delaiMoyen: "52 min",
+    incidents: 4,
+    note: 4.5,
+  },
+  {
+    coursier: "Lucas P. (Coursier.fr)",
+    livraisons: 38,
+    tauxSucces: 95,
+    delaiMoyen: "43 min",
+    incidents: 2,
+    note: 4.7,
+  },
+];
+
 const DATA_SECTEURS = [
   { name: "Mode", value: 52, color: "#C9A96E" },
   { name: "Beauté", value: 24, color: "#3B82F6" },
@@ -941,6 +984,134 @@ export default function Stats() {
           </div>
         </Card>
       </div>
+
+      {/* ── Performance livraison ── */}
+      <Card>
+        <SectionHeader
+          title="Livraison"
+          sub="Performance coursiers — délais et taux de succès"
+        />
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            fontSize: "13px",
+          }}
+        >
+          <thead>
+            <tr style={{ background: "var(--gray-bg)" }}>
+              {[
+                "Coursier",
+                "Livraisons",
+                "Taux succès",
+                "Délai moyen",
+                "Incidents",
+                "Note",
+              ].map((h) => (
+                <th
+                  key={h}
+                  style={{
+                    padding: "9px 14px",
+                    textAlign: "left",
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    color: "var(--gray)",
+                    borderBottom: "1px solid var(--white-3)",
+                  }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {DATA_PERF_LIVRAISON.map((c) => (
+              <tr
+                key={c.coursier}
+                style={{ borderBottom: "1px solid var(--white-3)" }}
+              >
+                <td style={{ padding: "12px 14px", fontWeight: "500" }}>
+                  {c.coursier}
+                </td>
+                <td style={{ padding: "12px 14px", color: "var(--gray)" }}>
+                  {c.livraisons}
+                </td>
+                <td style={{ padding: "12px 14px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        flex: 1,
+                        height: 6,
+                        background: "var(--white-3)",
+                        borderRadius: "6px",
+                        overflow: "hidden",
+                        minWidth: "60px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "100%",
+                          width: `${c.tauxSucces}%`,
+                          background:
+                            c.tauxSucces >= 95
+                              ? "#10B981"
+                              : c.tauxSucces >= 90
+                              ? "#F59E0B"
+                              : "#EF4444",
+                          borderRadius: "6px",
+                        }}
+                      />
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        color:
+                          c.tauxSucces >= 95
+                            ? "#2e8b57"
+                            : c.tauxSucces >= 90
+                            ? "#b7770d"
+                            : "#c0392b",
+                      }}
+                    >
+                      {c.tauxSucces}%
+                    </span>
+                  </div>
+                </td>
+                <td style={{ padding: "12px 14px", fontWeight: "600" }}>
+                  {c.delaiMoyen}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 14px",
+                    color: c.incidents > 3 ? "#c0392b" : "var(--gray)",
+                    fontWeight: c.incidents > 3 ? "700" : "400",
+                  }}
+                >
+                  {c.incidents}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 14px",
+                    color: "#b7770d",
+                    fontWeight: "700",
+                  }}
+                >
+                  ★ {c.note}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
 
       {/* ── Classement boutiques par performance ── */}
       <Card>

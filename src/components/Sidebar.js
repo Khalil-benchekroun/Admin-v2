@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useDemandes } from "../context/DemandesContext";
-import { useRole } from "../hooks/useRole";
 
 const MENU = [
   {
@@ -91,6 +90,7 @@ const MENU = [
       { path: "/notifications", label: "Notifications", roles: ["admin"] },
       { path: "/integrations", label: "Intégrations", roles: ["admin"] },
       { path: "/audit", label: "Journal d'audit", roles: ["admin"] },
+      { path: "/activite", label: "Activité équipe", roles: ["admin"] },
       { path: "/comptes", label: "Comptes admin / SAV", roles: ["admin"] },
       { path: "/tutorial", label: "Guide d'utilisation", roles: [] },
     ],
@@ -109,14 +109,14 @@ function peutAcceder(roles, role) {
   return roles.includes(role);
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onSearchClick, onDemoClick }) {
   const { logout, admin } = useAuth();
   const location = useLocation();
   const [mounted, setMounted] = useState(false);
 
   const role = admin?.role || "admin";
   const { demandesEnAttente } = useDemandes();
-  const isAdmin = role === "admin";
+  const isAdmin = role === "admin" || role === "superadmin";
   const demandesBoutique = demandesEnAttente.filter(
     (d) => d.type === "suspension_boutique"
   ).length;
@@ -125,8 +125,8 @@ export default function Sidebar() {
   ).length;
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
 
-  // superadmin uses "admin" role for menu display (sees all menus)
-  const menuRole = roleForMenu || role;
+  // superadmin sees same menu as admin
+  const menuRole = role === "superadmin" ? "admin" : role;
   const menuVisible = MENU.filter((g) => peutAcceder(g.roles, menuRole))
     .map((g) => ({
       ...g,
@@ -339,6 +339,52 @@ export default function Sidebar() {
           )}
         </div>
 
+        {/* SEARCH + DEMO */}
+        <div
+          style={{
+            padding: "10px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.05)",
+          }}
+        >
+          <button
+            onClick={onSearchClick}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 12px",
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "8px",
+              cursor: "pointer",
+              color: "rgba(255,255,255,0.35)",
+              fontSize: "12px",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "rgba(255,255,255,0.08)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "rgba(255,255,255,0.05)")
+            }
+          >
+            <span style={{ fontSize: "13px", opacity: 0.6 }}>🔍</span>
+            <span style={{ flex: 1, textAlign: "left" }}>Rechercher…</span>
+            <span
+              style={{
+                fontSize: "10px",
+                background: "rgba(255,255,255,0.08)",
+                padding: "2px 6px",
+                borderRadius: "4px",
+                color: "rgba(255,255,255,0.25)",
+              }}
+            >
+              ⌘K
+            </span>
+          </button>
+        </div>
+
         {/* NAVIGATION */}
         <nav
           className="nav-scroll"
@@ -445,6 +491,35 @@ export default function Sidebar() {
             padding: "12px 0",
           }}
         >
+          <button
+            onClick={onDemoClick}
+            style={{
+              width: "100%",
+              padding: "8px 16px",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "var(--font-body)",
+              fontSize: "10px",
+              fontWeight: "700",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "rgba(201,169,110,0.35)",
+              textAlign: "left",
+              transition: "color 0.2s",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = "rgba(201,169,110,0.7)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "rgba(201,169,110,0.35)")
+            }
+          >
+            🎬 Mode démo
+          </button>
           <button
             className="admin-logout"
             onClick={() => {

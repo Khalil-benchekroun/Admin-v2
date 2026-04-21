@@ -36,6 +36,7 @@ const ACCES = {
     "integrations",
     "audit",
     "comptes",
+    "activite",
   ],
 
   // sav = opérations client + support

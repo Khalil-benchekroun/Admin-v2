@@ -17,7 +17,7 @@ const COMPTES_DATA = [
   {
     id: "ADM-002",
     nom: "Marie L.",
-    email: "marie@livrr.fr",
+    email: "marie.sav@livrr.fr",
     role: "sav",
     statut: "actif",
     dateCreation: "12/01/2026",
@@ -28,7 +28,7 @@ const COMPTES_DATA = [
   {
     id: "ADM-003",
     nom: "Lucas D.",
-    email: "lucas@livrr.fr",
+    email: "lucas.sav@livrr.fr",
     role: "sav",
     statut: "actif",
     dateCreation: "15/01/2026",
@@ -39,7 +39,7 @@ const COMPTES_DATA = [
   {
     id: "ADM-004",
     nom: "Paul R.",
-    email: "paul@livrr.fr",
+    email: "paul.ops@livrr.fr",
     role: "ops",
     statut: "actif",
     dateCreation: "20/01/2026",
@@ -50,7 +50,7 @@ const COMPTES_DATA = [
   {
     id: "ADM-005",
     nom: "Amina S.",
-    email: "amina@livrr.fr",
+    email: "amina.sav@livrr.fr",
     role: "sav",
     statut: "inactif",
     dateCreation: "01/02/2026",
@@ -142,7 +142,12 @@ export default function Comptes() {
 
   const compte = selected ? comptes.find((c) => c.id === selected) : null;
 
-  const filtres = comptes.filter((c) => {
+  // Admin voit uniquement SAV/Ops — SuperAdmin voit tout
+  const comptesVisibles = estSuperAdmin
+    ? comptes
+    : comptes.filter((c) => c.role === "sav" || c.role === "ops");
+
+  const filtres = comptesVisibles.filter((c) => {
     const matchRole = filterRole === "all" || c.role === filterRole;
     const matchSearch =
       c.nom.toLowerCase().includes(search.toLowerCase()) ||
@@ -151,12 +156,12 @@ export default function Comptes() {
   });
 
   const stats = {
-    total: comptes.length,
-    actifs: comptes.filter((c) => c.statut === "actif").length,
-    superadmins: comptes.filter((c) => c.role === "superadmin").length,
-    admins: comptes.filter((c) => c.role === "admin").length,
-    sav: comptes.filter((c) => c.role === "sav").length,
-    ops: comptes.filter((c) => c.role === "ops").length,
+    total: comptesVisibles.length,
+    actifs: comptesVisibles.filter((c) => c.statut === "actif").length,
+    superadmins: comptesVisibles.filter((c) => c.role === "superadmin").length,
+    admins: comptesVisibles.filter((c) => c.role === "admin").length,
+    sav: comptesVisibles.filter((c) => c.role === "sav").length,
+    ops: comptesVisibles.filter((c) => c.role === "ops").length,
   };
 
   const creerCompte = () => {
@@ -406,15 +411,19 @@ export default function Comptes() {
               >
                 Tous
               </button>
-              {Object.entries(ROLE_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setFilterRole(k)}
-                  style={fBtn(filterRole === k, v.color, v.bg)}
-                >
-                  {v.label.split(" ")[0]}
-                </button>
-              ))}
+              {Object.entries(ROLE_CFG)
+                .filter(([k]) =>
+                  estSuperAdmin ? true : k === "sav" || k === "ops"
+                )
+                .map(([k, v]) => (
+                  <button
+                    key={k}
+                    onClick={() => setFilterRole(k)}
+                    style={fBtn(filterRole === k, v.color, v.bg)}
+                  >
+                    {v.label.split(" ")[0]}
+                  </button>
+                ))}
             </div>
           </div>
           <div style={{ flex: 1, overflowY: "auto" }}>

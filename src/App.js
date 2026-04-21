@@ -46,6 +46,9 @@ import Reporting from "./pages/Reporting";
 import CategoriesAdmin from "./pages/CategoriesAdmin";
 import HistoriqueReclamations from "./pages/HistoriqueReclamations";
 import TutorialAdmin from "./pages/TutorialAdmin";
+import Activite from "./pages/Activite";
+import RechercheGlobale from "./components/RechercheGlobale";
+import ModeDemo from "./components/ModeDemo";
 
 // ── Theme Context ──
 export const ThemeContext = createContext({ dark: false, toggle: () => {} });
@@ -135,6 +138,20 @@ function RoleRoute({ page, children }) {
 
 // ── Layout avec sidebar ──
 function AppLayout({ children }) {
+  const [showRecherche, setShowRecherche] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setShowRecherche(true);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <div
       style={{
@@ -143,7 +160,10 @@ function AppLayout({ children }) {
         background: "var(--gray-bg,#F7F5F2)",
       }}
     >
-      <Sidebar />
+      <Sidebar
+        onSearchClick={() => setShowRecherche(true)}
+        onDemoClick={() => setShowDemo((d) => !d)}
+      />
       <main
         style={{
           flex: 1,
@@ -153,8 +173,12 @@ function AppLayout({ children }) {
           position: "relative",
         }}
       >
+        {showDemo && <ModeDemo onClose={() => setShowDemo(false)} />}
         <PageTransition>{children}</PageTransition>
       </main>
+      {showRecherche && (
+        <RechercheGlobale onClose={() => setShowRecherche(false)} />
+      )}
     </div>
   );
 }
@@ -431,6 +455,14 @@ export default function App() {
                 element={
                   <PRR page="comptes">
                     <Comptes />
+                  </PRR>
+                }
+              />
+              <Route
+                path="/activite"
+                element={
+                  <PRR page="activite">
+                    <Activite />
                   </PRR>
                 }
               />
