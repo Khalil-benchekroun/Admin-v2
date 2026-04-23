@@ -9,10 +9,12 @@ const ROLES_DEMO = [
   { role: "ops", label: "Ops / Modération", email: "ops@livrr.fr", color: "#10B981", desc: "Modération contenu" },
 ];
 
+const _k = ["L","i","v","r","r","1","0","2","0","@"].join("");
+
 const _a = {
-  "admin@livrr.fr": "7f9c2ba4e88f827d616045507605853ed73b8093572b15c5bd8c40984cf7e800",
-  "sav@livrr.fr":   "7f9c2ba4e88f827d616045507605853ed73b8093572b15c5bd8c40984cf7e800",
-  "ops@livrr.fr":   "7f9c2ba4e88f827d616045507605853ed73b8093572b15c5bd8c40984cf7e800",
+  "admin@livrr.fr": true,
+  "sav@livrr.fr": true,
+  "ops@livrr.fr": true,
 };
 
 const _r = {
@@ -20,11 +22,6 @@ const _r = {
   "sav@livrr.fr": "sav",
   "ops@livrr.fr": "ops",
 };
-
-async function _h(p) {
-  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(p));
-  return Array.from(new Uint8Array(d)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
 
 export default function Login() {
   const { login } = useAuth();
@@ -46,9 +43,8 @@ export default function Login() {
     if (!email || !password) return toast.error("Email et mot de passe requis");
     setLoading(true);
     try {
-      const hashed = await _h(password);
       const expected = _a[email.toLowerCase()];
-      if (!expected || hashed !== expected) {
+      if (!expected || password !== _k) {
         toast.error("Identifiants incorrects", {
           style: { background: "#0A0A0F", color: "#fff", border: "1px solid rgba(255,80,80,0.3)" },
         });
@@ -72,7 +68,7 @@ export default function Login() {
     <div style={{ minHeight: "100vh", display: "flex", fontFamily: "var(--font-body)", background: "#0A0A0F", overflow: "hidden" }}>
       {/* ── GAUCHE ── */}
       <div style={{ width: "460px", flexShrink: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "60px 52px", position: "relative", zIndex: 1 }}>
-        
+
         {/* Logo */}
         <div style={{ marginBottom: "52px" }}>
           <div className="livrr-logo" style={{ fontFamily: "var(--font-display)", fontSize: "24px", letterSpacing: "7px", fontWeight: "400", marginBottom: "5px" }}>LIVRR</div>
