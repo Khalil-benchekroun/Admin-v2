@@ -47,6 +47,7 @@ import CategoriesAdmin from "./pages/CategoriesAdmin";
 import HistoriqueReclamations from "./pages/HistoriqueReclamations";
 import TutorialAdmin from "./pages/TutorialAdmin";
 import Activite from "./pages/Activite";
+import Coupons from "./pages/Coupons";
 import RechercheGlobale from "./components/RechercheGlobale";
 import ModeDemo from "./components/ModeDemo";
 
@@ -59,10 +60,7 @@ function ThemeProvider({ children }) {
     () => localStorage.getItem("livrr_admin_theme") === "dark"
   );
   useEffect(() => {
-    document.documentElement.setAttribute(
-      "data-theme",
-      dark ? "dark" : "light"
-    );
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
     localStorage.setItem("livrr_admin_theme", dark ? "dark" : "light");
   }, [dark]);
   return (
@@ -86,13 +84,11 @@ function PageTransition({ children }) {
     return () => clearTimeout(t);
   }, [location.pathname]);
   return (
-    <div
-      style={{
-        opacity: phase === "in" ? 1 : 0,
-        transform: phase === "in" ? "translateY(0)" : "translateY(6px)",
-        transition: "opacity 0.25s ease, transform 0.25s ease",
-      }}
-    >
+    <div style={{
+      opacity: phase === "in" ? 1 : 0,
+      transform: phase === "in" ? "translateY(0)" : "translateY(6px)",
+      transition: "opacity 0.25s ease, transform 0.25s ease",
+    }}>
       {displayed}
     </div>
   );
@@ -103,23 +99,8 @@ function PrivateRoute({ children }) {
   const { admin, loading } = useAuth();
   if (loading)
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          background: "#0A0A0F",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "var(--font-display)",
-            color: "var(--gold)",
-            fontSize: "24px",
-            letterSpacing: "6px",
-          }}
-        >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#0A0A0F" }}>
+        <div style={{ fontFamily: "var(--font-display)", color: "var(--gold)", fontSize: "24px", letterSpacing: "6px" }}>
           LIVRR
         </div>
       </div>
@@ -143,42 +124,20 @@ function AppLayout({ children }) {
 
   useEffect(() => {
     const handler = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
-        setShowRecherche(true);
-      }
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") { e.preventDefault(); setShowRecherche(true); }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "var(--gray-bg,#F7F5F2)",
-      }}
-    >
-      <Sidebar
-        onSearchClick={() => setShowRecherche(true)}
-        onDemoClick={() => setShowDemo((d) => !d)}
-      />
-      <main
-        style={{
-          flex: 1,
-          marginLeft: "240px",
-          width: "calc(100% - 240px)",
-          minHeight: "100vh",
-          position: "relative",
-        }}
-      >
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--gray-bg,#F7F5F2)" }}>
+      <Sidebar onSearchClick={() => setShowRecherche(true)} onDemoClick={() => setShowDemo((d) => !d)} />
+      <main style={{ flex: 1, marginLeft: "240px", width: "calc(100% - 240px)", minHeight: "100vh", position: "relative" }}>
         {showDemo && <ModeDemo onClose={() => setShowDemo(false)} />}
         <PageTransition>{children}</PageTransition>
       </main>
-      {showRecherche && (
-        <RechercheGlobale onClose={() => setShowRecherche(false)} />
-      )}
+      {showRecherche && <RechercheGlobale onClose={() => setShowRecherche(false)} />}
     </div>
   );
 }
@@ -194,10 +153,14 @@ const PR = ({ children }) => (
 const PRR = ({ page, children }) => (
   <PrivateRoute>
     <AppLayout>
-      <RoleRoute page={page}>{children}</RoleRoute>
+      <RoleRoute page={page}>
+        {children}
+      </RoleRoute>
     </AppLayout>
   </PrivateRoute>
 );
+
+
 
 export default function App() {
   return (
@@ -222,250 +185,41 @@ export default function App() {
               <Route path="/tutorial" element={<TutorialAdmin />} />
 
               {/* Pages accessibles à tous les rôles */}
-              <Route
-                path="/"
-                element={
-                  <PR>
-                    <Dashboard />
-                  </PR>
-                }
-              />
-              <Route
-                path="/statistiques"
-                element={
-                  <PR>
-                    <Stats />
-                  </PR>
-                }
-              />
-              <Route
-                path="/boutiques"
-                element={
-                  <PR>
-                    <Boutiques />
-                  </PR>
-                }
-              />
-              <Route
-                path="/messagerie"
-                element={
-                  <PRR page="messagerie">
-                    <Messagerie />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/produits"
-                element={
-                  <PR>
-                    <Produits />
-                  </PR>
-                }
-              />
-              <Route
-                path="/categories"
-                element={
-                  <PR>
-                    <CategoriesAdmin />
-                  </PR>
-                }
-              />
-              <Route
-                path="/commandes"
-                element={
-                  <PR>
-                    <Commandes />
-                  </PR>
-                }
-              />
-              <Route
-                path="/livraisons"
-                element={
-                  <PR>
-                    <Livraisons />
-                  </PR>
-                }
-              />
-              <Route
-                path="/retours"
-                element={
-                  <PR>
-                    <Retours />
-                  </PR>
-                }
-              />
-              <Route
-                path="/sav"
-                element={
-                  <PR>
-                    <SAV />
-                  </PR>
-                }
-              />
-              <Route
-                path="/historique-reclamations"
-                element={
-                  <PR>
-                    <HistoriqueReclamations />
-                  </PR>
-                }
-              />
-              <Route
-                path="/moderation"
-                element={
-                  <PR>
-                    <Moderation />
-                  </PR>
-                }
-              />
-              <Route
-                path="/avis"
-                element={
-                  <PR>
-                    <Avis />
-                  </PR>
-                }
-              />
+              <Route path="/" element={<PR><Dashboard /></PR>} />
+              <Route path="/statistiques" element={<PR><Stats /></PR>} />
+              <Route path="/boutiques" element={<PR><Boutiques /></PR>} />
+              <Route path="/messagerie" element={<PRR page="messagerie"><Messagerie /></PRR>} />
+              <Route path="/produits" element={<PR><Produits /></PR>} />
+              <Route path="/categories" element={<PR><CategoriesAdmin /></PR>} />
+              <Route path="/commandes" element={<PR><Commandes /></PR>} />
+              <Route path="/livraisons" element={<PR><Livraisons /></PR>} />
+              <Route path="/retours" element={<PR><Retours /></PR>} />
+              <Route path="/sav" element={<PR><SAV /></PR>} />
+              <Route path="/historique-reclamations" element={<PR><HistoriqueReclamations /></PR>} />
+              <Route path="/moderation" element={<PR><Moderation /></PR>} />
+              <Route path="/avis" element={<PR><Avis /></PR>} />
 
               {/* Pages SAV uniquement (pas Ops) */}
-              <Route
-                path="/clients"
-                element={
-                  <PRR page="clients">
-                    <Clients />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/parrainage"
-                element={
-                  <PRR page="parrainage">
-                    <Parrainage />
-                  </PRR>
-                }
-              />
+              <Route path="/clients" element={<PRR page="clients"><Clients /></PRR>} />
+              <Route path="/parrainage" element={<PRR page="parrainage"><Parrainage /></PRR>} />
 
               {/* Pages Admin uniquement */}
-              <Route
-                path="/invitations"
-                element={
-                  <PRR page="invitations">
-                    <Invitations />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/onboarding"
-                element={
-                  <PRR page="onboarding">
-                    <OnboardingAdmin />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/abonnements"
-                element={
-                  <PRR page="abonnements">
-                    <Abonnements />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/finance"
-                element={
-                  <PRR page="finance">
-                    <Finance />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/remboursements"
-                element={
-                  <PRR page="remboursements">
-                    <Remboursements />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/facturation"
-                element={
-                  <PRR page="facturation">
-                    <Facturation />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/reporting"
-                element={
-                  <PRR page="reporting">
-                    <Reporting />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/litiges"
-                element={
-                  <PRR page="litiges">
-                    <Litiges />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/parametres"
-                element={
-                  <PRR page="parametres">
-                    <Parametres />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/zones"
-                element={
-                  <PRR page="zones">
-                    <ZoneService />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/notifications"
-                element={
-                  <PRR page="notifications">
-                    <Notifications />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/integrations"
-                element={
-                  <PRR page="integrations">
-                    <Integrations />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/audit"
-                element={
-                  <PRR page="audit">
-                    <AuditLog />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/comptes"
-                element={
-                  <PRR page="comptes">
-                    <Comptes />
-                  </PRR>
-                }
-              />
-              <Route
-                path="/activite"
-                element={
-                  <PRR page="activite">
-                    <Activite />
-                  </PRR>
-                }
-              />
+              <Route path="/invitations" element={<PRR page="invitations"><Invitations /></PRR>} />
+              <Route path="/onboarding" element={<PRR page="onboarding"><OnboardingAdmin /></PRR>} />
+              <Route path="/abonnements" element={<PRR page="abonnements"><Abonnements /></PRR>} />
+              <Route path="/finance" element={<PRR page="finance"><Finance /></PRR>} />
+              <Route path="/remboursements" element={<PRR page="remboursements"><Remboursements /></PRR>} />
+              <Route path="/facturation" element={<PRR page="facturation"><Facturation /></PRR>} />
+              <Route path="/reporting" element={<PRR page="reporting"><Reporting /></PRR>} />
+              <Route path="/litiges" element={<PRR page="litiges"><Litiges /></PRR>} />
+              <Route path="/parametres" element={<PRR page="parametres"><Parametres /></PRR>} />
+              <Route path="/zones" element={<PRR page="zones"><ZoneService /></PRR>} />
+              <Route path="/notifications" element={<PRR page="notifications"><Notifications /></PRR>} />
+              <Route path="/integrations" element={<PRR page="integrations"><Integrations /></PRR>} />
+              <Route path="/audit" element={<PRR page="audit"><AuditLog /></PRR>} />
+              <Route path="/comptes" element={<PRR page="comptes"><Comptes /></PRR>} />
+              <Route path="/activite" element={<PRR page="activite"><Activite /></PRR>} />
+              <Route path="/coupons" element={<PRR page="coupons"><Coupons /></PRR>} />
 
               {/* 404 */}
               <Route path="*" element={<NotFound />} />

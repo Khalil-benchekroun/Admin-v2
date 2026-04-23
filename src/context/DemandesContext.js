@@ -10,15 +10,11 @@ export function DemandesProvider({ children }) {
       type: "suspension_boutique",
       cible: "Isabel Marant",
       cibleId: 3,
-      motif:
-        "Boutique inactive depuis 5 jours — 3 commandes annulées automatiquement",
+      motif: "Boutique inactive depuis 5 jours — 3 commandes annulées automatiquement",
       demandePar: "Paul (Ops)",
       role: "ops",
       date: new Date().toLocaleDateString("fr-FR"),
-      heure: new Date().toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      heure: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
       statut: "en_attente", // en_attente | validé | refusé
     },
     {
@@ -30,10 +26,7 @@ export function DemandesProvider({ children }) {
       demandePar: "Marie (SAV)",
       role: "sav",
       date: new Date().toLocaleDateString("fr-FR"),
-      heure: new Date().toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      heure: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
       statut: "en_attente",
     },
   ]);
@@ -42,10 +35,7 @@ export function DemandesProvider({ children }) {
     const newDemande = {
       id: `DEM-${String(demandes.length + 1).padStart(3, "0")}`,
       date: new Date().toLocaleDateString("fr-FR"),
-      heure: new Date().toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      heure: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
       statut: "en_attente",
       ...demande,
     };
@@ -54,29 +44,17 @@ export function DemandesProvider({ children }) {
   };
 
   const validerDemande = (id) => {
-    setDemandes((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, statut: "validé" } : d))
-    );
+    setDemandes((prev) => prev.map((d) => d.id === id ? { ...d, statut: "validé" } : d));
   };
 
   const refuserDemande = (id) => {
-    setDemandes((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, statut: "refusé" } : d))
-    );
+    setDemandes((prev) => prev.map((d) => d.id === id ? { ...d, statut: "refusé" } : d));
   };
 
   const demandesEnAttente = demandes.filter((d) => d.statut === "en_attente");
 
   return (
-    <DemandesContext.Provider
-      value={{
-        demandes,
-        demandesEnAttente,
-        ajouterDemande,
-        validerDemande,
-        refuserDemande,
-      }}
-    >
+    <DemandesContext.Provider value={{ demandes, demandesEnAttente, ajouterDemande, validerDemande, refuserDemande }}>
       {children}
     </DemandesContext.Provider>
   );
