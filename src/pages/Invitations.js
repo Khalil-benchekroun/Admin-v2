@@ -76,35 +76,15 @@ const INVITATIONS_DATA = [
 ];
 
 const PLANS = {
-  classic: {
-    label: "Classic",
-    color: "#6B7280",
-    bg: "rgba(107,114,128,0.08)",
-    prix: "149€/mois",
-  },
-  signature: {
-    label: "Signature",
-    color: "#3B82F6",
-    bg: "rgba(59,130,246,0.08)",
-    prix: "299€/mois",
-  },
-  prestige: {
-    label: "Prestige",
-    color: "#C9A96E",
-    bg: "rgba(201,169,110,0.08)",
-    prix: "599€/mois",
-  },
+  classic:   { label: "Classic",   color: "#6B7280", bg: "rgba(107,114,128,0.08)", prix: "149€/mois" },
+  signature: { label: "Signature", color: "#3B82F6", bg: "rgba(59,130,246,0.08)",  prix: "299€/mois" },
+  prestige:  { label: "Prestige",  color: "#C9A96E", bg: "rgba(201,169,110,0.08)", prix: "599€/mois" },
 };
 
 const STATUT_CFG = {
-  envoyé: { label: "Envoyé", color: "#185fa5", bg: "#eff6ff", dot: "#3B82F6" },
-  utilisé: {
-    label: "Utilisé",
-    color: "#2e8b57",
-    bg: "#e8f5ee",
-    dot: "#10B981",
-  },
-  expiré: { label: "Expiré", color: "#6B7280", bg: "#f3f4f6", dot: "#9CA3AF" },
+  envoyé:  { label: "Envoyé",  color: "#185fa5", bg: "#eff6ff", dot: "#3B82F6" },
+  utilisé: { label: "Utilisé", color: "#2e8b57", bg: "#e8f5ee", dot: "#10B981" },
+  expiré:  { label: "Expiré",  color: "#6B7280", bg: "#f3f4f6", dot: "#9CA3AF" },
 };
 
 function genToken(boutique, plan) {
@@ -123,7 +103,6 @@ export default function Invitations() {
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [noteText, setNoteText] = useState("");
 
-  // Formulaire création
   const [form, setForm] = useState({
     boutique: "",
     email: "",
@@ -150,21 +129,13 @@ export default function Invitations() {
     utilisés: invitations.filter((i) => i.statut === "utilisé").length,
     expirés: invitations.filter((i) => i.statut === "expiré").length,
     tauxConv: Math.round(
-      (invitations.filter((i) => i.statut === "utilisé").length /
-        invitations.length) *
-        100
+      (invitations.filter((i) => i.statut === "utilisé").length / invitations.length) * 100
     ),
   };
 
   const creerInvitation = () => {
-    if (!form.boutique.trim()) {
-      toast.error("Nom de la boutique requis");
-      return;
-    }
-    if (!form.email.trim() || !form.email.includes("@")) {
-      toast.error("Email invalide");
-      return;
-    }
+    if (!form.boutique.trim()) { toast.error("Nom de la boutique requis"); return; }
+    if (!form.email.trim() || !form.email.includes("@")) { toast.error("Email invalide"); return; }
 
     const token = genToken(form.boutique, form.plan);
     const today = new Date();
@@ -187,13 +158,7 @@ export default function Invitations() {
     };
 
     setInvitations((prev) => [newInv, ...prev]);
-    setForm({
-      boutique: "",
-      email: "",
-      plan: "signature",
-      duree: "7",
-      notes: "",
-    });
+    setForm({ boutique: "", email: "", plan: "signature", duree: "7", notes: "" });
     setShowCreateModal(false);
     setSelected(newInv.id);
     toast.success(`Invitation créée pour ${newInv.boutique}`);
@@ -206,16 +171,16 @@ export default function Invitations() {
       .catch(() => toast.error("Échec de la copie"));
   };
 
-  const renouvelerInvitation = () => {
-    if (!inv) return;
+  const renouvelerInvitation = (id) => {
+    const target = invitations.find((i) => i.id === id);
+    if (!target) return;
     const today = new Date();
     const expiry = new Date(today);
     expiry.setDate(expiry.getDate() + 7);
-    const newToken = genToken(inv.boutique, inv.plan);
-
+    const newToken = genToken(target.boutique, target.plan);
     setInvitations((prev) =>
       prev.map((i) =>
-        i.id === selected
+        i.id === id
           ? {
               ...i,
               statut: "envoyé",
@@ -236,12 +201,7 @@ export default function Invitations() {
     setInvitations((prev) =>
       prev.map((i) =>
         i.id === selected
-          ? {
-              ...i,
-              notes: i.notes
-                ? i.notes + "\n" + noteText.trim()
-                : noteText.trim(),
-            }
+          ? { ...i, notes: i.notes ? i.notes + "\n" + noteText.trim() : noteText.trim() }
           : i
       )
     );
@@ -253,195 +213,72 @@ export default function Invitations() {
   return (
     <div className="page" style={{ padding: "44px 52px" }}>
       {/* ── Header ── */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          marginBottom: "36px",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "36px" }}>
         <div>
-          <div
-            style={{
-              fontSize: "11px",
-              fontWeight: "700",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "var(--gray)",
-              marginBottom: "8px",
-            }}
-          >
-            Administration
-          </div>
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "44px",
-              fontWeight: "300",
-              lineHeight: 1.1,
-            }}
-          >
-            Liens d'invitation
-          </h1>
-          <p
-            style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}
-          >
-            Génération et suivi des invitations boutiques partenaires
-          </p>
+          <div style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px" }}>Administration</div>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "44px", fontWeight: "300", lineHeight: 1.1 }}>Liens d'invitation</h1>
+          <p style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}>Génération et suivi des invitations boutiques partenaires</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          style={{
-            padding: "11px 22px",
-            borderRadius: "var(--radius-sm)",
-            fontSize: "13px",
-            fontWeight: "600",
-            background: "var(--noir)",
-            color: "var(--gold)",
-            border: "none",
-            cursor: "pointer",
-            letterSpacing: "0.05em",
-          }}
+          style={{ padding: "11px 22px", borderRadius: "var(--radius-sm)", fontSize: "13px", fontWeight: "600", background: "var(--noir)", color: "var(--gold)", border: "none", cursor: "pointer", letterSpacing: "0.05em" }}
         >
           + Créer une invitation
         </button>
       </div>
 
       {/* ── KPIs ── */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "14px",
-          marginBottom: "28px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", marginBottom: "28px" }}>
         {[
           { label: "Total", val: stats.total, color: "var(--noir)" },
           { label: "Envoyés", val: stats.envoyés, color: "#185fa5" },
           { label: "Utilisés", val: stats.utilisés, color: "#2e8b57" },
           { label: "Expirés", val: stats.expirés, color: "#6B7280" },
-          {
-            label: "Taux conversion",
-            val: stats.tauxConv + "%",
-            color: "var(--gold-dark)",
-          },
+          { label: "Taux conversion", val: stats.tauxConv + "%", color: "var(--gold-dark)" },
         ].map((k) => (
-          <div
-            key={k.label}
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-md)",
-              padding: "18px 20px",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "10px",
-                fontWeight: "700",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "var(--gray)",
-                marginBottom: "8px",
-              }}
-            >
-              {k.label}
-            </div>
-            <div
-              style={{
-                fontSize: "30px",
-                fontFamily: "var(--font-display)",
-                fontWeight: "300",
-                color: k.color,
-                lineHeight: 1,
-              }}
-            >
-              {k.val}
-            </div>
+          <div key={k.label} style={{ background: "#fff", borderRadius: "var(--radius-md)", padding: "18px 20px", boxShadow: "var(--shadow-sm)", border: "1px solid var(--white-3)" }}>
+            <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px" }}>{k.label}</div>
+            <div style={{ fontSize: "30px", fontFamily: "var(--font-display)", fontWeight: "300", color: k.color, lineHeight: 1 }}>{k.val}</div>
           </div>
         ))}
       </div>
 
       {/* ── Filtres ── */}
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "var(--radius-lg)",
-          padding: "14px 20px",
-          boxShadow: "var(--shadow-sm)",
-          border: "1px solid var(--white-3)",
-          marginBottom: "16px",
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap",
-          alignItems: "center",
-        }}
-      >
+      <div style={{ background: "#fff", borderRadius: "var(--radius-lg)", padding: "14px 20px", boxShadow: "var(--shadow-sm)", border: "1px solid var(--white-3)", marginBottom: "16px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
         <input
           type="text"
           placeholder="Boutique, email, ID…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{
-            padding: "8px 12px",
-            border: "1px solid var(--white-3)",
-            borderRadius: "var(--radius-sm)",
-            fontSize: "13px",
-            background: "var(--gray-bg)",
-            outline: "none",
-            minWidth: "200px",
-          }}
+          style={{ padding: "8px 12px", border: "1px solid var(--white-3)", borderRadius: "var(--radius-sm)", fontSize: "13px", background: "var(--gray-bg)", outline: "none", minWidth: "200px" }}
         />
         <div style={{ width: 1, height: 20, background: "var(--white-3)" }} />
-        <button
-          onClick={() => setFilterStatut("all")}
-          style={fBtn(filterStatut === "all")}
-        >
-          Tous
-        </button>
+        <button onClick={() => setFilterStatut("all")} style={fBtn(filterStatut === "all")}>Tous</button>
         {Object.entries(STATUT_CFG).map(([k, v]) => (
-          <button
-            key={k}
-            onClick={() => setFilterStatut(k)}
-            style={fBtn(filterStatut === k, v.color, v.bg)}
-          >
-            {v.label}
-          </button>
+          <button key={k} onClick={() => setFilterStatut(k)} style={fBtn(filterStatut === k, v.color, v.bg)}>{v.label}</button>
         ))}
         <div style={{ width: 1, height: 20, background: "var(--white-3)" }} />
-        <button
-          onClick={() => setFilterPlan("all")}
-          style={fBtn(filterPlan === "all")}
-        >
-          Tous plans
-        </button>
+        <button onClick={() => setFilterPlan("all")} style={fBtn(filterPlan === "all")}>Tous plans</button>
         {Object.entries(PLANS).map(([k, v]) => (
-          <button
-            key={k}
-            onClick={() => setFilterPlan(k)}
-            style={fBtn(filterPlan === k, v.color, v.bg)}
-          >
-            {v.label}
-          </button>
+          <button key={k} onClick={() => setFilterPlan(k)} style={fBtn(filterPlan === k, v.color, v.bg)}>{v.label}</button>
         ))}
-        <span
-          style={{ marginLeft: "auto", fontSize: "12px", color: "var(--gray)" }}
-        >
+        <span style={{ marginLeft: "auto", fontSize: "12px", color: "var(--gray)" }}>
           {filtres.length} invitation{filtres.length > 1 ? "s" : ""}
         </span>
       </div>
 
-      {/* ── Tableau pleine largeur ── */}
+      {/* ✅ POINT 5 — Wrapper avec overflowX: "auto" pour le scroll horizontal */}
       <div
         style={{
           background: "#fff",
           borderRadius: "var(--radius-lg)",
           boxShadow: "var(--shadow-sm)",
           border: "1px solid var(--white-3)",
-          overflow: "hidden",
+          // ✅ scroll horizontal quand le tableau dépasse la largeur de l'écran
+          overflowX: "auto",
+          // ✅ scroll vertical si beaucoup d'invitations (optionnel, ~10 lignes)
+          maxHeight: "600px",
+          overflowY: "auto",
         }}
       >
         <table
@@ -449,34 +286,18 @@ export default function Invitations() {
             width: "100%",
             borderCollapse: "collapse",
             fontSize: "13px",
+            // ✅ largeur minimale pour que toutes les colonnes soient visibles
+            minWidth: "900px",
           }}
         >
           <thead>
             <tr style={{ background: "var(--gray-bg)" }}>
-              {[
-                "ID",
-                "Boutique",
-                "Email",
-                "Plan",
-                "Créé par",
-                "Création",
-                "Expiration",
-                "Statut",
-                "Lien",
-                "",
-              ].map((h) => (
+              {["ID", "Boutique", "Email", "Plan", "Créé par", "Création", "Expiration", "Statut", "Lien", ""].map((h) => (
                 <th
                   key={h}
-                  style={{
-                    padding: "11px 14px",
-                    textAlign: "left",
-                    fontSize: "10px",
-                    fontWeight: "700",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    color: "var(--gray)",
-                    borderBottom: "1px solid var(--white-3)",
-                    whiteSpace: "nowrap",
+                  style={{ padding: "11px 14px", textAlign: "left", fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--gray)", borderBottom: "1px solid var(--white-3)", whiteSpace: "nowrap",
+                    // ✅ Header sticky pour garder les titres visibles au scroll vertical
+                    position: "sticky", top: 0, background: "var(--gray-bg)", zIndex: 1,
                   }}
                 >
                   {h}
@@ -492,186 +313,56 @@ export default function Invitations() {
                 i.statut === "envoyé" &&
                 (() => {
                   const [d, m, y] = i.dateExpiration.split("/");
-                  const diff =
-                    (new Date(`${y}-${m}-${d}`) - new Date()) /
-                    (1000 * 60 * 60 * 24);
+                  const diff = (new Date(`${y}-${m}-${d}`) - new Date()) / (1000 * 60 * 60 * 24);
                   return diff <= 2;
                 })();
               return (
                 <tr
                   key={i.id}
-                  style={{
-                    borderBottom: "1px solid var(--white-3)",
-                    background: isExpiringSoon
-                      ? "rgba(192,57,43,0.015)"
-                      : "transparent",
-                  }}
+                  style={{ borderBottom: "1px solid var(--white-3)", background: isExpiringSoon ? "rgba(192,57,43,0.015)" : "transparent" }}
                 >
-                  <td
-                    style={{
-                      padding: "13px 14px",
-                      fontFamily: "monospace",
-                      fontSize: "11px",
-                      fontWeight: "700",
-                      color: "var(--gold-dark)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {i.id}
-                  </td>
-                  <td style={{ padding: "13px 14px", fontWeight: "600" }}>
-                    {i.boutique}
-                  </td>
-                  <td
-                    style={{
-                      padding: "13px 14px",
-                      fontSize: "12px",
-                      color: "var(--gray)",
-                    }}
-                  >
-                    {i.email}
-                  </td>
+                  <td style={{ padding: "13px 14px", fontFamily: "monospace", fontSize: "11px", fontWeight: "700", color: "var(--gold-dark)", whiteSpace: "nowrap" }}>{i.id}</td>
+                  <td style={{ padding: "13px 14px", fontWeight: "600", whiteSpace: "nowrap" }}>{i.boutique}</td>
+                  <td style={{ padding: "13px 14px", fontSize: "12px", color: "var(--gray)", whiteSpace: "nowrap" }}>{i.email}</td>
                   <td style={{ padding: "13px 14px" }}>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        padding: "3px 10px",
-                        borderRadius: "12px",
-                        background: plan.bg,
-                        color: plan.color,
-                      }}
-                    >
-                      {plan.label}
-                    </span>
+                    <span style={{ fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "12px", background: plan.bg, color: plan.color }}>{plan.label}</span>
                   </td>
-                  <td
-                    style={{
-                      padding: "13px 14px",
-                      fontSize: "12px",
-                      color: "var(--gray)",
-                    }}
-                  >
-                    {i.crééPar}
-                  </td>
-                  <td
-                    style={{
-                      padding: "13px 14px",
-                      fontSize: "12px",
-                      color: "var(--gray)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {i.dateCreation}
-                  </td>
-                  <td
-                    style={{
-                      padding: "13px 14px",
-                      fontSize: "12px",
-                      whiteSpace: "nowrap",
-                      color: isExpiringSoon ? "#c0392b" : "var(--gray)",
-                      fontWeight: isExpiringSoon ? "700" : "400",
-                    }}
-                  >
-                    {i.statut === "utilisé"
-                      ? `✓ ${i.dateUtilisation}`
-                      : i.dateExpiration}
+                  <td style={{ padding: "13px 14px", fontSize: "12px", color: "var(--gray)", whiteSpace: "nowrap" }}>{i.crééPar}</td>
+                  <td style={{ padding: "13px 14px", fontSize: "12px", color: "var(--gray)", whiteSpace: "nowrap" }}>{i.dateCreation}</td>
+                  <td style={{ padding: "13px 14px", fontSize: "12px", whiteSpace: "nowrap", color: isExpiringSoon ? "#c0392b" : "var(--gray)", fontWeight: isExpiringSoon ? "700" : "400" }}>
+                    {i.statut === "utilisé" ? `✓ ${i.dateUtilisation}` : i.dateExpiration}
                     {isExpiringSoon && " ⚠"}
                   </td>
                   <td style={{ padding: "13px 14px" }}>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        padding: "3px 10px",
-                        borderRadius: "12px",
-                        background: statut.bg,
-                        color: statut.color,
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 5,
-                          height: 5,
-                          borderRadius: "50%",
-                          background: statut.dot,
-                        }}
-                      />
+                    <span style={{ fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "12px", background: statut.bg, color: statut.color, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <span style={{ width: 5, height: 5, borderRadius: "50%", background: statut.dot }} />
                       {statut.label}
                     </span>
                   </td>
-                  <td style={{ padding: "13px 14px", maxWidth: "200px" }}>
-                    <div
-                      style={{
-                        fontSize: "11px",
-                        fontFamily: "monospace",
-                        color:
-                          i.statut === "utilisé"
-                            ? "var(--gray-light)"
-                            : "var(--gray)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                  <td style={{ padding: "13px 14px", minWidth: "200px", maxWidth: "240px" }}>
+                    <div style={{ fontSize: "11px", fontFamily: "monospace", color: i.statut === "utilisé" ? "var(--gray-light)" : "var(--gray)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {i.lien}
                     </div>
                     {i.notes && (
-                      <div
-                        style={{
-                          fontSize: "10px",
-                          color: "var(--gray-light)",
-                          marginTop: "2px",
-                          fontStyle: "italic",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <div style={{ fontSize: "10px", color: "var(--gray-light)", marginTop: "2px", fontStyle: "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         📝 {i.notes}
                       </div>
                     )}
                   </td>
-                  <td style={{ padding: "13px 14px" }}>
+                  <td style={{ padding: "13px 14px", whiteSpace: "nowrap" }}>
                     <div style={{ display: "flex", gap: "5px" }}>
                       {i.statut === "envoyé" && (
                         <button
                           onClick={() => copierLien(i.lien)}
-                          style={{
-                            padding: "5px 10px",
-                            borderRadius: "var(--radius-sm)",
-                            fontSize: "11px",
-                            fontWeight: "600",
-                            background: "var(--noir)",
-                            color: "var(--gold)",
-                            border: "none",
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                          }}
+                          style={{ padding: "5px 10px", borderRadius: "var(--radius-sm)", fontSize: "11px", fontWeight: "600", background: "var(--noir)", color: "var(--gold)", border: "none", cursor: "pointer", whiteSpace: "nowrap" }}
                         >
                           📋 Copier
                         </button>
                       )}
                       {(i.statut === "envoyé" || i.statut === "expiré") && (
                         <button
-                          onClick={() => {
-                            setSelected(i.id);
-                            renouvelerInvitation();
-                          }}
-                          style={{
-                            padding: "5px 10px",
-                            borderRadius: "var(--radius-sm)",
-                            fontSize: "11px",
-                            fontWeight: "600",
-                            background: "var(--gray-bg)",
-                            color: "var(--gray)",
-                            border: "1px solid var(--white-3)",
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                          }}
+                          onClick={() => renouvelerInvitation(i.id)}
+                          style={{ padding: "5px 10px", borderRadius: "var(--radius-sm)", fontSize: "11px", fontWeight: "600", background: "var(--gray-bg)", color: "var(--gray)", border: "1px solid var(--white-3)", cursor: "pointer", whiteSpace: "nowrap" }}
                         >
                           Renouveler
                         </button>
@@ -683,14 +374,9 @@ export default function Invitations() {
             })}
           </tbody>
         </table>
+
         {filtres.length === 0 && (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "48px",
-              color: "var(--gray)",
-            }}
-          >
+          <div style={{ textAlign: "center", padding: "48px", color: "var(--gray)" }}>
             <div style={{ fontSize: "32px", marginBottom: "8px" }}>🔗</div>
             <div style={{ fontSize: "13px" }}>Aucune invitation trouvée</div>
           </div>
@@ -701,43 +387,14 @@ export default function Invitations() {
       {showCreateModal && (
         <div style={overlayStyle} onClick={() => setShowCreateModal(false)}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "28px",
-                fontWeight: "300",
-                marginBottom: "6px",
-              }}
-            >
-              Nouvelle invitation
-            </h2>
-            <p
-              style={{
-                fontSize: "13px",
-                color: "var(--gray)",
-                marginBottom: "24px",
-              }}
-            >
-              Le lien sera généré automatiquement et unique.
-            </p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "28px", fontWeight: "300", marginBottom: "6px" }}>Nouvelle invitation</h2>
+            <p style={{ fontSize: "13px", color: "var(--gray)", marginBottom: "24px" }}>Le lien sera généré automatiquement et unique.</p>
 
             <Label>Nom de la boutique *</Label>
-            <input
-              type="text"
-              value={form.boutique}
-              onChange={(e) => setForm({ ...form, boutique: e.target.value })}
-              placeholder="Ex. : Jacquemus"
-              style={inputStyle}
-            />
+            <input type="text" value={form.boutique} onChange={(e) => setForm({ ...form, boutique: e.target.value })} placeholder="Ex. : Jacquemus" style={inputStyle} />
 
             <Label>Email de contact *</Label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="contact@boutique.fr"
-              style={inputStyle}
-            />
+            <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="contact@boutique.fr" style={inputStyle} />
 
             <Label>Plan proposé</Label>
             <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
@@ -745,31 +402,10 @@ export default function Invitations() {
                 <button
                   key={k}
                   onClick={() => setForm({ ...form, plan: k })}
-                  style={{
-                    flex: 1,
-                    padding: "10px 8px",
-                    borderRadius: "var(--radius-sm)",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    border: `2px solid ${
-                      form.plan === k ? p.color : "var(--white-3)"
-                    }`,
-                    background: form.plan === k ? p.bg : "transparent",
-                    color: form.plan === k ? p.color : "var(--gray)",
-                    transition: "all 0.15s",
-                  }}
+                  style={{ flex: 1, padding: "10px 8px", borderRadius: "var(--radius-sm)", fontSize: "12px", fontWeight: "600", cursor: "pointer", border: `2px solid ${form.plan === k ? p.color : "var(--white-3)"}`, background: form.plan === k ? p.bg : "transparent", color: form.plan === k ? p.color : "var(--gray)", transition: "all 0.15s" }}
                 >
                   <div>{p.label}</div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "400",
-                      marginTop: "2px",
-                    }}
-                  >
-                    {p.prix}
-                  </div>
+                  <div style={{ fontSize: "10px", fontWeight: "400", marginTop: "2px" }}>{p.prix}</div>
                 </button>
               ))}
             </div>
@@ -780,23 +416,7 @@ export default function Invitations() {
                 <button
                   key={d}
                   onClick={() => setForm({ ...form, duree: d })}
-                  style={{
-                    flex: 1,
-                    padding: "9px",
-                    borderRadius: "var(--radius-sm)",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    border: `1.5px solid ${
-                      form.duree === d ? "var(--gold)" : "var(--white-3)"
-                    }`,
-                    background:
-                      form.duree === d
-                        ? "rgba(201,169,110,0.08)"
-                        : "transparent",
-                    color:
-                      form.duree === d ? "var(--gold-dark)" : "var(--gray)",
-                  }}
+                  style={{ flex: 1, padding: "9px", borderRadius: "var(--radius-sm)", fontSize: "12px", fontWeight: "600", cursor: "pointer", border: `1.5px solid ${form.duree === d ? "var(--gold)" : "var(--white-3)"}`, background: form.duree === d ? "rgba(201,169,110,0.08)" : "transparent", color: form.duree === d ? "var(--gold-dark)" : "var(--gray)" }}
                 >
                   {d}j
                 </button>
@@ -804,30 +424,11 @@ export default function Invitations() {
             </div>
 
             <Label>Notes (optionnel)</Label>
-            <textarea
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="Contexte de la prospection, conditions particulières…"
-              rows={3}
-              style={{ ...inputStyle, resize: "none", marginBottom: "20px" }}
-            />
+            <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Contexte de la prospection, conditions particulières…" rows={3} style={{ ...inputStyle, resize: "none", marginBottom: "20px" }} />
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                onClick={() => setShowCreateModal(false)}
-                style={btnStyle("ghost")}
-              >
-                Annuler
-              </button>
-              <button onClick={creerInvitation} style={btnStyle("gold")}>
-                Générer le lien
-              </button>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={() => setShowCreateModal(false)} style={btnStyle("ghost")}>Annuler</button>
+              <button onClick={creerInvitation} style={btnStyle("gold")}>Générer le lien</button>
             </div>
           </div>
         </div>
@@ -839,79 +440,24 @@ export default function Invitations() {
 // ── Helpers ────────────────────────────────────────────────
 function Label({ children, style }) {
   return (
-    <div
-      style={{
-        fontSize: "11px",
-        fontWeight: "700",
-        letterSpacing: "0.1em",
-        textTransform: "uppercase",
-        color: "var(--gray)",
-        marginBottom: "8px",
-        ...style,
-      }}
-    >
+    <div style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px", ...style }}>
       {children}
     </div>
   );
 }
 
 function fBtn(active, color, bg) {
-  return {
-    padding: "4px 10px",
-    borderRadius: "20px",
-    fontSize: "11px",
-    fontWeight: "600",
-    cursor: "pointer",
-    border: `1.5px solid ${active ? color || "var(--gold)" : "var(--white-3)"}`,
-    background: active ? bg || "rgba(201,169,110,0.08)" : "transparent",
-    color: active ? color || "var(--gold-dark)" : "var(--gray)",
-  };
+  return { padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: "600", cursor: "pointer", border: `1.5px solid ${active ? color || "var(--gold)" : "var(--white-3)"}`, background: active ? bg || "rgba(201,169,110,0.08)" : "transparent", color: active ? color || "var(--gold-dark)" : "var(--gray)" };
 }
 
 function btnStyle(type) {
   const s = {
-    gold: { background: "var(--noir)", color: "var(--gold)", border: "none" },
-    ghost: {
-      background: "transparent",
-      color: "var(--gray)",
-      border: "1.5px solid var(--white-3)",
-    },
+    gold:  { background: "var(--noir)", color: "var(--gold)", border: "none" },
+    ghost: { background: "transparent", color: "var(--gray)", border: "1.5px solid var(--white-3)" },
   };
-  return {
-    padding: "9px 16px",
-    borderRadius: "var(--radius-sm)",
-    fontSize: "12px",
-    fontWeight: "600",
-    cursor: "pointer",
-    ...s[type],
-  };
+  return { padding: "9px 16px", borderRadius: "var(--radius-sm)", fontSize: "12px", fontWeight: "600", cursor: "pointer", ...s[type] };
 }
 
-const overlayStyle = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(10,10,15,0.55)",
-  zIndex: 200,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
-const modalStyle = {
-  background: "#fff",
-  borderRadius: "var(--radius-lg)",
-  padding: "32px",
-  width: "500px",
-  boxShadow: "var(--shadow-lg)",
-  maxHeight: "90vh",
-  overflowY: "auto",
-};
-const inputStyle = {
-  width: "100%",
-  padding: "10px 12px",
-  border: "1.5px solid var(--white-3)",
-  borderRadius: "var(--radius-sm)",
-  fontSize: "13px",
-  outline: "none",
-  marginBottom: "16px",
-  display: "block",
-};
+const overlayStyle = { position: "fixed", inset: 0, background: "rgba(10,10,15,0.55)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" };
+const modalStyle = { background: "#fff", borderRadius: "var(--radius-lg)", padding: "32px", width: "500px", boxShadow: "var(--shadow-lg)", maxHeight: "90vh", overflowY: "auto" };
+const inputStyle = { width: "100%", padding: "10px 12px", border: "1.5px solid var(--white-3)", borderRadius: "var(--radius-sm)", fontSize: "13px", outline: "none", marginBottom: "16px", display: "block" };
