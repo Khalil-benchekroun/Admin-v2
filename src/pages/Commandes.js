@@ -157,13 +157,9 @@ export default function Commandes() {
           >
             Commandes
           </h1>
-          <p
-            style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}
-          >
+          <p style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}>
             {commandes.filter((c) => c.status === "bloquée").length > 0
-              ? `🔴 ${
-                  commandes.filter((c) => c.status === "bloquée").length
-                } commande(s) bloquée(s) — intervention requise`
+              ? `🔴 ${commandes.filter((c) => c.status === "bloquée").length} commande(s) bloquée(s) — intervention requise`
               : "Aucune commande bloquée"}
           </p>
         </div>
@@ -199,11 +195,8 @@ export default function Commandes() {
               style={{
                 padding: "8px 14px",
                 borderRadius: "30px",
-                border: `1.5px solid ${
-                  filter === f.k ? "var(--gold)" : "rgba(0,0,0,0.1)"
-                }`,
-                background:
-                  filter === f.k ? "rgba(201,169,110,0.08)" : "transparent",
+                border: `1.5px solid ${filter === f.k ? "var(--gold)" : "rgba(0,0,0,0.1)"}`,
+                background: filter === f.k ? "rgba(201,169,110,0.08)" : "transparent",
                 color: filter === f.k ? "var(--gold-dark)" : "var(--gray)",
                 fontSize: "12px",
                 fontWeight: "600",
@@ -214,11 +207,7 @@ export default function Commandes() {
             >
               {f.l}{" "}
               <span style={{ opacity: 0.6 }}>
-                (
-                {f.k === "all"
-                  ? commandes.length
-                  : commandes.filter((c) => c.status === f.k).length}
-                )
+                ({f.k === "all" ? commandes.length : commandes.filter((c) => c.status === f.k).length})
               </span>
             </button>
           ))}
@@ -230,10 +219,23 @@ export default function Commandes() {
           display: "grid",
           gridTemplateColumns: selected ? "1fr 380px" : "1fr",
           gap: "20px",
+          // ✅ POINT 2 — alignItems stretch pour que les deux colonnes soient à la même hauteur
+          alignItems: "start",
         }}
       >
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-          <table className="table">
+        {/* ✅ POINT 2 — Wrapper avec overflowX: "auto" pour le scroll horizontal du tableau */}
+        <div
+          className="card"
+          style={{
+            padding: 0,
+            // ✅ scroll horizontal quand le panneau détail rétrécit le tableau
+            overflowX: "auto",
+            // ✅ scroll vertical limité à ~6 lignes (~420px) quand beaucoup de commandes
+            maxHeight: "520px",
+            overflowY: "auto",
+          }}
+        >
+          <table className="table" style={{ minWidth: "680px" }}>
             <thead>
               <tr>
                 <th>Référence</th>
@@ -251,13 +253,13 @@ export default function Commandes() {
                 return (
                   <tr
                     key={c.id}
-                    onClick={() =>
-                      setSelected(selected?.id === c.id ? null : c)
-                    }
+                    onClick={() => setSelected(selected?.id === c.id ? null : c)}
                     style={{
                       cursor: "pointer",
                       background:
-                        c.status === "bloquée"
+                        selected?.id === c.id
+                          ? "rgba(201,169,110,0.06)"
+                          : c.status === "bloquée"
                           ? "rgba(239,68,68,0.02)"
                           : "transparent",
                     }}
@@ -273,30 +275,17 @@ export default function Commandes() {
                         {c.id}
                       </div>
                       {c.motifBlocage && (
-                        <div
-                          style={{
-                            fontSize: "10px",
-                            color: "var(--error)",
-                            marginTop: "2px",
-                          }}
-                        >
+                        <div style={{ fontSize: "10px", color: "var(--error)", marginTop: "2px" }}>
                           ⚠ {c.motifBlocage}
                         </div>
                       )}
                     </td>
                     <td style={{ fontWeight: "500" }}>{c.client}</td>
-                    <td style={{ fontSize: "13px", color: "var(--gray)" }}>
-                      {c.boutique}
-                    </td>
-                    <td
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: "15px",
-                      }}
-                    >
+                    <td style={{ fontSize: "13px", color: "var(--gray)" }}>{c.boutique}</td>
+                    <td style={{ fontFamily: "var(--font-display)", fontSize: "15px" }}>
                       {c.total} €
                     </td>
-                    <td style={{ fontSize: "12px", color: "var(--gray)" }}>
+                    <td style={{ fontSize: "12px", color: "var(--gray)", whiteSpace: "nowrap" }}>
                       {c.date} · {c.heure}
                     </td>
                     <td>
@@ -336,14 +325,29 @@ export default function Commandes() {
                   </tr>
                 );
               })}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} style={{ textAlign: "center", padding: "32px", color: "var(--gray)", fontSize: "13px" }}>
+                    Aucune commande trouvée
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
+        {/* Panneau détail — sticky, scroll indépendant */}
         {selected && (
           <div
             className="card"
-            style={{ position: "sticky", top: "20px", height: "fit-content" }}
+            style={{
+              position: "sticky",
+              top: "20px",
+              height: "fit-content",
+              // ✅ Le panneau détail a son propre scroll si contenu long
+              maxHeight: "520px",
+              overflowY: "auto",
+            }}
           >
             <div
               style={{
@@ -389,6 +393,7 @@ export default function Commandes() {
                 ✕
               </button>
             </div>
+
             {[
               { l: "Client", v: selected.client },
               { l: "Boutique", v: selected.boutique },
@@ -424,11 +429,10 @@ export default function Commandes() {
                 >
                   {info.l}
                 </span>
-                <span style={{ fontSize: "13px", fontWeight: "500" }}>
-                  {info.v}
-                </span>
+                <span style={{ fontSize: "13px", fontWeight: "500" }}>{info.v}</span>
               </div>
             ))}
+
             {selected.motifBlocage && (
               <div
                 style={{
@@ -443,28 +447,21 @@ export default function Commandes() {
                 ⚠ {selected.motifBlocage}
               </div>
             )}
-            <div
-              style={{
-                display: "flex",
-                gap: "8px",
-                marginTop: "16px",
-                flexWrap: "wrap",
-              }}
-            >
-              {selected.status !== "annulée" &&
-                selected.status !== "livrée" && (
-                  <button
-                    className="btn-danger"
-                    style={{ flex: 1, fontSize: "12px" }}
-                    onClick={() => {
-                      setPendingId(selected.id);
-                      setMotif("");
-                      setShowCancel(true);
-                    }}
-                  >
-                    Annuler la commande
-                  </button>
-                )}
+
+            <div style={{ display: "flex", gap: "8px", marginTop: "16px", flexWrap: "wrap" }}>
+              {selected.status !== "annulée" && selected.status !== "livrée" && (
+                <button
+                  className="btn-danger"
+                  style={{ flex: 1, fontSize: "12px" }}
+                  onClick={() => {
+                    setPendingId(selected.id);
+                    setMotif("");
+                    setShowCancel(true);
+                  }}
+                >
+                  Annuler la commande
+                </button>
+              )}
               {selected.status !== "annulée" && (
                 <button
                   className="btn-outline"
@@ -541,14 +538,7 @@ export default function Commandes() {
               Motif <strong>obligatoire</strong> — tracé et horodaté.
             </p>
             <label className="label">Motif *</label>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-                marginBottom: "16px",
-              }}
-            >
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "16px" }}>
               {MOTIFS_ANNULATION.map((m) => (
                 <div
                   key={m}
@@ -559,11 +549,8 @@ export default function Commandes() {
                     cursor: "pointer",
                     fontSize: "13px",
                     transition: "all 0.15s",
-                    border: `1.5px solid ${
-                      motif === m ? "var(--error)" : "rgba(0,0,0,0.08)"
-                    }`,
-                    background:
-                      motif === m ? "rgba(192,57,43,0.05)" : "#FAFAF8",
+                    border: `1.5px solid ${motif === m ? "var(--error)" : "rgba(0,0,0,0.08)"}`,
+                    background: motif === m ? "rgba(192,57,43,0.05)" : "#FAFAF8",
                     color: motif === m ? "var(--error)" : "var(--noir)",
                     fontWeight: motif === m ? "600" : "400",
                   }}
@@ -573,18 +560,10 @@ export default function Commandes() {
               ))}
             </div>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                className="btn-danger"
-                style={{ flex: 2 }}
-                onClick={annuler}
-              >
+              <button className="btn-danger" style={{ flex: 2 }} onClick={annuler}>
                 Confirmer l'annulation
               </button>
-              <button
-                className="btn-outline"
-                style={{ flex: 1 }}
-                onClick={() => setShowCancel(false)}
-              >
+              <button className="btn-outline" style={{ flex: 1 }} onClick={() => setShowCancel(false)}>
                 Annuler
               </button>
             </div>
@@ -656,19 +635,15 @@ export default function Commandes() {
                     borderRadius: "10px",
                     cursor: "pointer",
                     textAlign: "center",
-                    border: `1.5px solid ${
-                      rembType === t ? "var(--gold)" : "rgba(0,0,0,0.08)"
-                    }`,
-                    background:
-                      rembType === t ? "rgba(201,169,110,0.06)" : "#FAFAF8",
+                    border: `1.5px solid ${rembType === t ? "var(--gold)" : "rgba(0,0,0,0.08)"}`,
+                    background: rembType === t ? "rgba(201,169,110,0.06)" : "#FAFAF8",
                   }}
                 >
                   <div
                     style={{
                       fontWeight: "700",
                       fontSize: "14px",
-                      color:
-                        rembType === t ? "var(--gold-dark)" : "var(--noir)",
+                      color: rembType === t ? "var(--gold-dark)" : "var(--noir)",
                     }}
                   >
                     {t === "total" ? "Total" : "Partiel"}
@@ -699,18 +674,10 @@ export default function Commandes() {
               style={{ resize: "none" }}
             />
             <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                className="btn-gold"
-                style={{ flex: 2 }}
-                onClick={rembourser}
-              >
+              <button className="btn-gold" style={{ flex: 2 }} onClick={rembourser}>
                 Déclencher le remboursement
               </button>
-              <button
-                className="btn-outline"
-                style={{ flex: 1 }}
-                onClick={() => setShowRemb(false)}
-              >
+              <button className="btn-outline" style={{ flex: 1 }} onClick={() => setShowRemb(false)}>
                 Annuler
               </button>
             </div>
