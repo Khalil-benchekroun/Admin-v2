@@ -19,26 +19,11 @@ const LITIGES_DATA = [
     motifEscalade:
       "Coursier introuvable depuis 45 min. Client très mécontent, menace chargeback. Dépasse mes droits SAV.",
     historique: [
-      {
-        action: "Ticket créé",
-        par: "Sophie M.",
-        heure: "14:22",
-        date: "18/04/2026",
-      },
-      {
-        action: "Assigné à Marie (SAV)",
-        par: "Système",
-        heure: "14:23",
-        date: "18/04/2026",
-      },
-      {
-        action: "Escalade vers Admin plateforme",
-        par: "Marie (SAV)",
-        heure: "15:20",
-        date: "18/04/2026",
-      },
+      { action: "Ticket créé", par: "Sophie M.", heure: "14:22", date: "18/04/2026" },
+      { action: "Assigné à Marie (SAV)", par: "Système", heure: "14:23", date: "18/04/2026" },
+      { action: "Escalade vers Admin plateforme", par: "Marie (SAV)", heure: "15:20", date: "18/04/2026" },
     ],
-    decision: null,
+    decisions: [],
     noteAdmin: "",
   },
   {
@@ -58,34 +43,13 @@ const LITIGES_DATA = [
     motifEscalade:
       "La boutique conteste la responsabilité. Client a des photos. Boutique dit que le produit était intact au départ. Besoin d'arbitrage admin.",
     historique: [
-      {
-        action: "Ticket créé",
-        par: "Yasmine B.",
-        heure: "16:30",
-        date: "15/04/2026",
-      },
-      {
-        action: "Assigné à Lucas (SAV)",
-        par: "Système",
-        heure: "16:31",
-        date: "15/04/2026",
-      },
-      {
-        action: "Contact boutique Isabel Marant",
-        par: "Lucas (SAV)",
-        heure: "09:00",
-        date: "16/04/2026",
-      },
-      {
-        action: "Escalade — boutique conteste",
-        par: "Lucas (SAV)",
-        heure: "11:30",
-        date: "16/04/2026",
-      },
+      { action: "Ticket créé", par: "Yasmine B.", heure: "16:30", date: "15/04/2026" },
+      { action: "Assigné à Lucas (SAV)", par: "Système", heure: "16:31", date: "15/04/2026" },
+      { action: "Contact boutique Isabel Marant", par: "Lucas (SAV)", heure: "09:00", date: "16/04/2026" },
+      { action: "Escalade — boutique conteste", par: "Lucas (SAV)", heure: "11:30", date: "16/04/2026" },
     ],
-    decision: null,
-    noteAdmin:
-      "Photos reçues par email. Déchirure couture gauche visible. Défaut de fabrication probable.",
+    decisions: [],
+    noteAdmin: "Photos reçues par email. Déchirure couture gauche visible. Défaut de fabrication probable.",
   },
   {
     id: "LIT-010",
@@ -104,39 +68,22 @@ const LITIGES_DATA = [
     motifEscalade:
       "Retour reçu et validé par la boutique le 10/04. Boutique bloque le remboursement sans motif valide.",
     historique: [
-      {
-        action: "Ticket créé",
-        par: "Nadia S.",
-        heure: "11:00",
-        date: "10/04/2026",
-      },
-      {
-        action: "Retour reçu confirmé",
-        par: "AMI Paris",
-        heure: "09:30",
-        date: "11/04/2026",
-      },
-      {
-        action: "Escalade — boutique bloque",
-        par: "Marie (SAV)",
-        heure: "14:00",
-        date: "12/04/2026",
-      },
-      {
-        action: "Arbitrage admin — remboursement forcé 290€",
-        par: "Khalil B.",
-        heure: "16:00",
-        date: "12/04/2026",
-      },
-      {
-        action: "Litige résolu",
-        par: "Khalil B.",
-        heure: "16:05",
-        date: "12/04/2026",
-      },
+      { action: "Ticket créé", par: "Nadia S.", heure: "11:00", date: "10/04/2026" },
+      { action: "Retour reçu confirmé", par: "AMI Paris", heure: "09:30", date: "11/04/2026" },
+      { action: "Escalade — boutique bloque", par: "Marie (SAV)", heure: "14:00", date: "12/04/2026" },
+      { action: "Arbitrage admin — remboursement forcé 290€", par: "Khalil B.", heure: "16:00", date: "12/04/2026" },
+      { action: "Litige résolu", par: "Khalil B.", heure: "16:05", date: "12/04/2026" },
     ],
-    decision:
-      "Remboursement forcé de 290€. La boutique AMI Paris a été notifiée. Un avertissement a été ajouté à leur dossier.",
+    decisions: [
+      {
+        choix: ["Remboursement total accordé au client", "Avertissement formel à la boutique"],
+        montantPartiel: null,
+        motif: "Remboursement forcé de 290€. La boutique AMI Paris a été notifiée. Un avertissement a été ajouté à leur dossier.",
+        date: "12/04/2026",
+        heure: "16:00",
+        par: "Khalil B.",
+      }
+    ],
     noteAdmin: "3ème litige avec AMI Paris ce trimestre. Surveiller de près.",
   },
   {
@@ -156,57 +103,30 @@ const LITIGES_DATA = [
     motifEscalade:
       "3ème chargeback du même client en moins d'un mois. Pattern clairement abusif. Blocage recommandé.",
     historique: [
-      {
-        action: "Signalement créé",
-        par: "Marie (SAV)",
-        heure: "10:00",
-        date: "08/04/2026",
-      },
-      {
-        action: "Escalade fraude suspectée",
-        par: "Marie (SAV)",
-        heure: "10:00",
-        date: "08/04/2026",
-      },
-      {
-        action: "Compte client bloqué",
-        par: "Khalil B.",
-        heure: "11:00",
-        date: "08/04/2026",
-      },
-      {
-        action: "Signalement plateforme de paiement",
-        par: "Khalil B.",
-        heure: "11:15",
-        date: "08/04/2026",
-      },
-      {
-        action: "Litige résolu — compte fermé",
-        par: "Khalil B.",
-        heure: "11:20",
-        date: "08/04/2026",
-      },
+      { action: "Signalement créé", par: "Marie (SAV)", heure: "10:00", date: "08/04/2026" },
+      { action: "Escalade fraude suspectée", par: "Marie (SAV)", heure: "10:00", date: "08/04/2026" },
+      { action: "Compte client bloqué", par: "Khalil B.", heure: "11:00", date: "08/04/2026" },
+      { action: "Signalement plateforme de paiement", par: "Khalil B.", heure: "11:15", date: "08/04/2026" },
+      { action: "Litige résolu — compte fermé", par: "Khalil B.", heure: "11:20", date: "08/04/2026" },
     ],
-    decision:
-      "Compte client définitivement bloqué. Signalement transmis à la plateforme de paiement. Chargebacks contestés.",
+    decisions: [
+      {
+        choix: ["Compte client bloqué — fraude avérée", "Dossier transmis au service juridique"],
+        montantPartiel: null,
+        motif: "Compte client définitivement bloqué. Signalement transmis à la plateforme de paiement. Chargebacks contestés.",
+        date: "08/04/2026",
+        heure: "11:00",
+        par: "Khalil B.",
+      }
+    ],
     noteAdmin: "",
   },
 ];
 
 const TYPE_CFG = {
-  livraison: {
-    label: "Livraison",
-    color: "#185fa5",
-    bg: "#eff6ff",
-    icon: "🛵",
-  },
+  livraison: { label: "Livraison", color: "#185fa5", bg: "#eff6ff", icon: "🛵" },
   produit: { label: "Produit", color: "#b7770d", bg: "#faeeda", icon: "📦" },
-  remboursement: {
-    label: "Remboursement",
-    color: "#6d28d9",
-    bg: "#f5f3ff",
-    icon: "💸",
-  },
+  remboursement: { label: "Remboursement", color: "#6d28d9", bg: "#f5f3ff", icon: "💸" },
   fraude: { label: "Fraude", color: "#c0392b", bg: "#fef2f2", icon: "⚠️" },
 };
 
@@ -217,21 +137,15 @@ const PRIORITE_CFG = {
 };
 
 const STATUT_CFG = {
-  escaladé: {
-    label: "Escaladé",
-    color: "#c0392b",
-    bg: "#fef2f2",
-    dot: "#EF4444",
-  },
-  en_cours: {
-    label: "En cours",
-    color: "#185fa5",
-    bg: "#eff6ff",
-    dot: "#3B82F6",
-  },
+  escaladé: { label: "Escaladé", color: "#c0392b", bg: "#fef2f2", dot: "#EF4444" },
+  en_cours: { label: "En cours", color: "#185fa5", bg: "#eff6ff", dot: "#3B82F6" },
   résolu: { label: "Résolu", color: "#2e8b57", bg: "#e8f5ee", dot: "#10B981" },
 };
 
+// Décisions qui nécessitent un champ montant partiel
+const DECISIONS_AVEC_MONTANT = ["Remboursement partiel accordé"];
+
+// Décisions qui ne sont pas conclusives seules (nécessitent confirmation ultérieure)
 const DECISIONS_RAPIDES = [
   "Remboursement total accordé au client",
   "Remboursement partiel accordé",
@@ -248,10 +162,13 @@ export default function Litiges() {
   const [filterStatut, setFilterStatut] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const [showDecisionModal, setShowDecisionModal] = useState(false);
-  const [decisionChoisie, setDecisionChoisie] = useState("");
+  const [decisionsModes, setDecisionsModes] = useState([]); // multi-sélection (array)
+  const [montantPartiel, setMontantPartiel] = useState("");
   const [decisionMotif, setDecisionMotif] = useState("");
   const [noteText, setNoteText] = useState("");
   const [showNoteInput, setShowNoteInput] = useState(false);
+  // Mode révision : permet de modifier une décision déjà prise
+  const [modeRevision, setModeRevision] = useState(false);
 
   const lit = litiges.find((l) => l.id === selected);
 
@@ -265,11 +182,19 @@ export default function Litiges() {
     total: litiges.length,
     escaladés: litiges.filter((l) => l.statut === "escaladé").length,
     enCours: litiges.filter((l) => l.statut === "en_cours").length,
-    critiques: litiges.filter(
-      (l) => l.priorite === "critique" && l.statut !== "résolu"
-    ).length,
+    critiques: litiges.filter((l) => l.priorite === "critique" && l.statut !== "résolu").length,
     résolus: litiges.filter((l) => l.statut === "résolu").length,
   };
+
+  // Toggle une décision dans la multi-sélection
+  const toggleDecision = (d) => {
+    setDecisionsModes((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+    );
+  };
+
+  // Vérifie si une décision avec montant partiel est cochée
+  const needsMontant = decisionsModes.some((d) => DECISIONS_AVEC_MONTANT.includes(d));
 
   const prendreEnCharge = () => {
     setLitiges((prev) =>
@@ -280,12 +205,7 @@ export default function Litiges() {
               statut: "en_cours",
               historique: [
                 ...l.historique,
-                {
-                  action: "Pris en charge par Admin",
-                  par: "Khalil B.",
-                  heure: now(),
-                  date: today(),
-                },
+                { action: "Pris en charge par Admin", par: "Khalil B.", heure: now(), date: today() },
               ],
             }
           : l
@@ -294,45 +214,82 @@ export default function Litiges() {
     toast.success("Litige pris en charge");
   };
 
+  const ouvrirModal = (revision = false) => {
+    setModeRevision(revision);
+    if (revision && lit?.decisions?.length > 0) {
+      // Pré-remplir avec la dernière décision
+      const derniere = lit.decisions[lit.decisions.length - 1];
+      setDecisionsModes(derniere.choix || []);
+      setMontantPartiel(derniere.montantPartiel || "");
+      setDecisionMotif(derniere.motif || "");
+    } else {
+      setDecisionsModes([]);
+      setMontantPartiel("");
+      setDecisionMotif("");
+    }
+    setShowDecisionModal(true);
+  };
+
+  const fermerModal = () => {
+    setShowDecisionModal(false);
+    setDecisionsModes([]);
+    setMontantPartiel("");
+    setDecisionMotif("");
+    setModeRevision(false);
+  };
+
   const appliquerDecision = () => {
-    if (!decisionChoisie) {
-      toast.error("Choisissez une décision");
+    if (decisionsModes.length === 0) {
+      toast.error("Choisissez au moins une décision");
       return;
     }
     if (!decisionMotif.trim()) {
       toast.error("Motif obligatoire");
       return;
     }
+    if (needsMontant && !montantPartiel) {
+      toast.error("Indiquez le montant du remboursement partiel");
+      return;
+    }
+
+    const nouvelleDecision = {
+      choix: decisionsModes,
+      montantPartiel: needsMontant ? montantPartiel : null,
+      motif: decisionMotif.trim(),
+      date: today(),
+      heure: now(),
+      par: "Khalil B.",
+    };
+
+    const labelDecision = decisionsModes.join(" + ") + (needsMontant ? ` (${montantPartiel}€)` : "");
+
     setLitiges((prev) =>
-      prev.map((l) =>
-        l.id === selected
-          ? {
-              ...l,
-              statut: "résolu",
-              decision: `${decisionChoisie} — ${decisionMotif}`,
-              historique: [
-                ...l.historique,
-                {
-                  action: `Décision admin : ${decisionChoisie}`,
-                  par: "Khalil B.",
-                  heure: now(),
-                  date: today(),
-                },
-                {
-                  action: "Litige résolu",
-                  par: "Khalil B.",
-                  heure: now(),
-                  date: today(),
-                },
-              ],
-            }
-          : l
-      )
+      prev.map((l) => {
+        if (l.id !== selected) return l;
+        // En mode révision, on remplace la dernière décision ; sinon on ajoute
+        const nouvellesDecisions = modeRevision
+          ? [...(l.decisions || []).slice(0, -1), nouvelleDecision]
+          : [...(l.decisions || []), nouvelleDecision];
+
+        const actionLabel = modeRevision
+          ? `Décision révisée : ${labelDecision}`
+          : `Décision admin : ${labelDecision}`;
+
+        return {
+          ...l,
+          statut: "résolu",
+          decisions: nouvellesDecisions,
+          historique: [
+            ...l.historique,
+            { action: actionLabel, par: "Khalil B.", heure: now(), date: today() },
+            ...(modeRevision ? [] : [{ action: "Litige résolu", par: "Khalil B.", heure: now(), date: today() }]),
+          ],
+        };
+      })
     );
-    setShowDecisionModal(false);
-    setDecisionChoisie("");
-    setDecisionMotif("");
-    toast.success("Décision enregistrée — litige résolu");
+
+    fermerModal();
+    toast.success(modeRevision ? "Décision révisée avec succès" : "Décision enregistrée — litige résolu");
   };
 
   const ajouterNote = () => {
@@ -342,9 +299,7 @@ export default function Litiges() {
         l.id === selected
           ? {
               ...l,
-              noteAdmin: l.noteAdmin
-                ? l.noteAdmin + "\n" + noteText.trim()
-                : noteText.trim(),
+              noteAdmin: l.noteAdmin ? l.noteAdmin + "\n" + noteText.trim() : noteText.trim(),
             }
           : l
       )
@@ -357,156 +312,51 @@ export default function Litiges() {
   return (
     <div className="page" style={{ padding: "32px 36px" }}>
       <div style={{ marginBottom: "36px" }}>
-        <div
-          style={{
-            fontSize: "11px",
-            fontWeight: "700",
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "var(--gray)",
-            marginBottom: "8px",
-          }}
-        >
+        <div style={{ fontSize: "11px", fontWeight: "700", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px" }}>
           Administration
         </div>
-        <h1
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "44px",
-            fontWeight: "300",
-            lineHeight: 1.1,
-          }}
-        >
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "44px", fontWeight: "300", lineHeight: 1.1 }}>
           Litiges & Arbitrage
         </h1>
         <p style={{ color: "var(--gray)", fontSize: "14px", marginTop: "6px" }}>
-          Dossiers escaladés par le SAV — décisions et arbitrages admin
-          plateforme
+          Dossiers escaladés par le SAV — décisions et arbitrages admin plateforme
         </p>
       </div>
 
       {/* KPIs */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: "10px",
-          marginBottom: "18px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "10px", marginBottom: "18px" }}>
         {[
           { label: "Total litiges", val: stats.total, color: "var(--noir)" },
           { label: "Escaladés", val: stats.escaladés, color: "#c0392b" },
-          {
-            label: "En cours d'arbitrage",
-            val: stats.enCours,
-            color: "#185fa5",
-          },
+          { label: "En cours d'arbitrage", val: stats.enCours, color: "#185fa5" },
           { label: "Critiques", val: stats.critiques, color: "#c0392b" },
           { label: "Résolus", val: stats.résolus, color: "#2e8b57" },
         ].map((k) => (
-          <div
-            key={k.label}
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-md)",
-              padding: "18px 20px",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "10px",
-                fontWeight: "700",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "var(--gray)",
-                marginBottom: "8px",
-              }}
-            >
+          <div key={k.label} style={{ background: "#fff", borderRadius: "var(--radius-md)", padding: "18px 20px", boxShadow: "var(--shadow-sm)", border: "1px solid var(--white-3)" }}>
+            <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px" }}>
               {k.label}
             </div>
-            <div
-              style={{
-                fontSize: "30px",
-                fontFamily: "var(--font-display)",
-                fontWeight: "300",
-                color: k.color,
-                lineHeight: 1,
-              }}
-            >
+            <div style={{ fontSize: "30px", fontFamily: "var(--font-display)", fontWeight: "300", color: k.color, lineHeight: 1 }}>
               {k.val}
             </div>
           </div>
         ))}
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "300px 1fr",
-          gap: "20px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: "20px" }}>
         {/* Liste */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "var(--radius-lg)",
-            boxShadow: "var(--shadow-sm)",
-            border: "1px solid var(--white-3)",
-            display: "flex",
-            flexDirection: "column",
-            maxHeight: "calc(100vh - 265px)",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              padding: "12px 14px",
-              borderBottom: "1px solid var(--white-3)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: "5px",
-                flexWrap: "wrap",
-                marginBottom: "6px",
-              }}
-            >
-              <button
-                onClick={() => setFilterStatut("all")}
-                style={fBtn(filterStatut === "all")}
-              >
-                Tous
-              </button>
+        <div style={{ background: "#fff", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--white-3)", display: "flex", flexDirection: "column", maxHeight: "calc(100vh - 265px)", overflow: "hidden" }}>
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--white-3)" }}>
+            <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginBottom: "6px" }}>
+              <button onClick={() => setFilterStatut("all")} style={fBtn(filterStatut === "all")}>Tous</button>
               {Object.entries(STATUT_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setFilterStatut(k)}
-                  style={fBtn(filterStatut === k, v.color, v.bg)}
-                >
-                  {v.label}
-                </button>
+                <button key={k} onClick={() => setFilterStatut(k)} style={fBtn(filterStatut === k, v.color, v.bg)}>{v.label}</button>
               ))}
             </div>
             <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
-              <button
-                onClick={() => setFilterType("all")}
-                style={fBtn(filterType === "all")}
-              >
-                Tous types
-              </button>
+              <button onClick={() => setFilterType("all")} style={fBtn(filterType === "all")}>Tous types</button>
               {Object.entries(TYPE_CFG).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setFilterType(k)}
-                  style={fBtn(filterType === k, v.color, v.bg)}
-                >
-                  {v.icon} {v.label}
-                </button>
+                <button key={k} onClick={() => setFilterType(k)} style={fBtn(filterType === k, v.color, v.bg)}>{v.icon} {v.label}</button>
               ))}
             </div>
           </div>
@@ -520,114 +370,21 @@ export default function Litiges() {
                 <div
                   key={l.id}
                   onClick={() => setSelected(l.id)}
-                  style={{
-                    padding: "14px 16px",
-                    borderBottom: "1px solid var(--white-3)",
-                    cursor: "pointer",
-                    background: isActive
-                      ? "rgba(201,169,110,0.06)"
-                      : l.statut === "escaladé"
-                      ? "rgba(192,57,43,0.02)"
-                      : "transparent",
-                    borderLeft: isActive
-                      ? "3px solid var(--gold)"
-                      : `3px solid ${
-                          l.statut === "escaladé" ? "#EF4444" : "transparent"
-                        }`,
-                    transition: "all 0.15s",
-                  }}
+                  style={{ padding: "14px 16px", borderBottom: "1px solid var(--white-3)", cursor: "pointer", background: isActive ? "rgba(201,169,110,0.06)" : l.statut === "escaladé" ? "rgba(192,57,43,0.02)" : "transparent", borderLeft: isActive ? "3px solid var(--gold)" : `3px solid ${l.statut === "escaladé" ? "#EF4444" : "transparent"}`, transition: "all 0.15s" }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "11px",
-                          fontWeight: "700",
-                          color: "var(--gold-dark)",
-                        }}
-                      >
-                        {l.id}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "10px",
-                          padding: "1px 7px",
-                          borderRadius: "10px",
-                          background: tc.bg,
-                          color: tc.color,
-                          fontWeight: "600",
-                        }}
-                      >
-                        {tc.icon} {tc.label}
-                      </span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "5px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--gold-dark)" }}>{l.id}</span>
+                      <span style={{ fontSize: "10px", padding: "1px 7px", borderRadius: "10px", background: tc.bg, color: tc.color, fontWeight: "600" }}>{tc.icon} {tc.label}</span>
                       {l.priorite === "critique" && (
-                        <span
-                          style={{
-                            fontSize: "9px",
-                            fontWeight: "800",
-                            color: pc.color,
-                            background: pc.bg,
-                            padding: "1px 6px",
-                            borderRadius: "10px",
-                          }}
-                        >
-                          CRITIQUE
-                        </span>
+                        <span style={{ fontSize: "9px", fontWeight: "800", color: pc.color, background: pc.bg, padding: "1px 6px", borderRadius: "10px" }}>CRITIQUE</span>
                       )}
                     </div>
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        fontWeight: "600",
-                        padding: "2px 8px",
-                        borderRadius: "12px",
-                        background: sc.bg,
-                        color: sc.color,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {sc.label}
-                    </span>
+                    <span style={{ fontSize: "10px", fontWeight: "600", padding: "2px 8px", borderRadius: "12px", background: sc.bg, color: sc.color, flexShrink: 0 }}>{sc.label}</span>
                   </div>
-                  <div
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: "500",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    {l.sujet}
-                  </div>
-                  <div style={{ fontSize: "11px", color: "var(--gray)" }}>
-                    {l.client.nom} · {l.boutique} · {l.montant}€
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11px",
-                      color: "var(--gray-light)",
-                      marginTop: "2px",
-                    }}
-                  >
-                    Escaladé par {l.escaladéPar} · {l.heureEscalade}{" "}
-                    {l.dateEscalade}
-                  </div>
+                  <div style={{ fontSize: "13px", fontWeight: "500", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "3px" }}>{l.sujet}</div>
+                  <div style={{ fontSize: "11px", color: "var(--gray)" }}>{l.client.nom} · {l.boutique} · {l.montant}€</div>
+                  <div style={{ fontSize: "11px", color: "var(--gray-light)", marginTop: "2px" }}>Escaladé par {l.escaladéPar} · {l.heureEscalade} {l.dateEscalade}</div>
                 </div>
               );
             })}
@@ -636,150 +393,46 @@ export default function Litiges() {
 
         {/* Détail */}
         {!lit ? (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--white-3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: "400px",
-              color: "var(--gray)",
-            }}
-          >
+          <div style={{ background: "#fff", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--white-3)", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px", color: "var(--gray)" }}>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚖️</div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "22px",
-                  fontWeight: "300",
-                }}
-              >
-                Sélectionnez un litige
-              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "22px", fontWeight: "300" }}>Sélectionnez un litige</div>
             </div>
           </div>
         ) : (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-sm)",
-              border: `1px solid ${
-                lit.statut === "escaladé" ? "#fecaca" : "var(--white-3)"
-              }`,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div style={{ background: "#fff", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", border: `1px solid ${lit.statut === "escaladé" ? "#fecaca" : "var(--white-3)"}`, display: "flex", flexDirection: "column" }}>
             {/* Header */}
-            <div
-              style={{
-                padding: "20px 28px",
-                borderBottom: "1px solid var(--white-3)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  marginBottom: "10px",
-                }}
-              >
+            <div style={{ padding: "20px 28px", borderBottom: "1px solid var(--white-3)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                 <div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "22px",
-                      fontWeight: "300",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    {lit.sujet}
-                  </div>
-                  <div
-                    style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        padding: "3px 10px",
-                        borderRadius: "20px",
-                        background: TYPE_CFG[lit.type].bg,
-                        color: TYPE_CFG[lit.type].color,
-                      }}
-                    >
-                      {TYPE_CFG[lit.type].icon} {TYPE_CFG[lit.type].label}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        padding: "3px 10px",
-                        borderRadius: "20px",
-                        background: STATUT_CFG[lit.statut].bg,
-                        color: STATUT_CFG[lit.statut].color,
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          background: STATUT_CFG[lit.statut].dot,
-                          display: "inline-block",
-                          marginRight: "5px",
-                        }}
-                      />
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "22px", fontWeight: "300", marginBottom: "6px" }}>{lit.sujet}</div>
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "20px", background: TYPE_CFG[lit.type].bg, color: TYPE_CFG[lit.type].color }}>{TYPE_CFG[lit.type].icon} {TYPE_CFG[lit.type].label}</span>
+                    <span style={{ fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "20px", background: STATUT_CFG[lit.statut].bg, color: STATUT_CFG[lit.statut].color }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: STATUT_CFG[lit.statut].dot, display: "inline-block", marginRight: "5px" }} />
                       {STATUT_CFG[lit.statut].label}
                     </span>
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "700",
-                        padding: "3px 10px",
-                        borderRadius: "20px",
-                        background: PRIORITE_CFG[lit.priorite].bg,
-                        color: PRIORITE_CFG[lit.priorite].color,
-                      }}
-                    >
-                      {PRIORITE_CFG[lit.priorite].label}
-                    </span>
+                    <span style={{ fontSize: "11px", fontWeight: "700", padding: "3px 10px", borderRadius: "20px", background: PRIORITE_CFG[lit.priorite].bg, color: PRIORITE_CFG[lit.priorite].color }}>{PRIORITE_CFG[lit.priorite].label}</span>
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
                   {lit.statut === "escaladé" && (
-                    <button onClick={prendreEnCharge} style={bStyle("ghost")}>
-                      Prendre en charge
-                    </button>
+                    <button onClick={prendreEnCharge} style={bStyle("ghost")}>Prendre en charge</button>
                   )}
                   {lit.statut !== "résolu" && (
-                    <button
-                      onClick={() => setShowDecisionModal(true)}
-                      style={bStyle("gold")}
-                    >
-                      Rendre une décision
-                    </button>
+                    <button onClick={() => ouvrirModal(false)} style={bStyle("gold")}>Rendre une décision</button>
+                  )}
+                  {/* ✅ POINT 1.3 — Bouton révision si déjà résolu */}
+                  {lit.statut === "résolu" && (
+                    <button onClick={() => ouvrirModal(true)} style={bStyle("revision")}>✏️ Modifier la décision</button>
                   )}
                 </div>
               </div>
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
-              {/* Infos + Motif escalade */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "20px",
-                  marginBottom: "20px",
-                }}
-              >
+              {/* Dossier + escalade */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
                 <div>
                   <STitle>Dossier</STitle>
                   <IBox>
@@ -800,43 +453,34 @@ export default function Litiges() {
                 </div>
               </div>
 
-              {/* Motif */}
+              {/* Motif escalade */}
               <div style={{ marginBottom: "20px" }}>
                 <STitle>Motif de l'escalade</STitle>
-                <div
-                  style={{
-                    background: "#fef2f2",
-                    border: "1px solid #fecaca",
-                    borderRadius: "var(--radius-md)",
-                    padding: "14px 18px",
-                    fontSize: "13px",
-                    lineHeight: 1.7,
-                    color: "var(--noir)",
-                    fontStyle: "italic",
-                  }}
-                >
+                <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "var(--radius-md)", padding: "14px 18px", fontSize: "13px", lineHeight: 1.7, color: "var(--noir)", fontStyle: "italic" }}>
                   « {lit.motifEscalade} »
                 </div>
               </div>
 
-              {/* Décision admin */}
-              {lit.decision && (
+              {/* ✅ POINT 1.1 + 1.2 — Affichage des décisions (potentiellement multiples) */}
+              {lit.decisions && lit.decisions.length > 0 && (
                 <div style={{ marginBottom: "20px" }}>
-                  <STitle>Décision admin</STitle>
-                  <div
-                    style={{
-                      background: "#e8f5ee",
-                      border: "1px solid #bbf7d0",
-                      borderRadius: "var(--radius-md)",
-                      padding: "14px 18px",
-                      fontSize: "13px",
-                      lineHeight: 1.7,
-                      color: "#2e8b57",
-                      fontWeight: "500",
-                    }}
-                  >
-                    ✓ {lit.decision}
-                  </div>
+                  <STitle>
+                    {lit.decisions.length > 1 ? `Décisions admin (${lit.decisions.length})` : "Décision admin"}
+                  </STitle>
+                  {lit.decisions.map((dec, idx) => (
+                    <div key={idx} style={{ background: "#e8f5ee", border: "1px solid #bbf7d0", borderRadius: "var(--radius-md)", padding: "14px 18px", fontSize: "13px", lineHeight: 1.7, color: "#2e8b57", fontWeight: "500", marginBottom: idx < lit.decisions.length - 1 ? "10px" : 0 }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "6px" }}>
+                        {dec.choix.map((c, i) => (
+                          <span key={i} style={{ background: "#d1fae5", color: "#065f46", fontSize: "11px", fontWeight: "700", padding: "2px 10px", borderRadius: "20px" }}>✓ {c}</span>
+                        ))}
+                        {dec.montantPartiel && (
+                          <span style={{ background: "#fef3c7", color: "#92400e", fontSize: "11px", fontWeight: "700", padding: "2px 10px", borderRadius: "20px" }}>💶 {dec.montantPartiel}€</span>
+                        )}
+                      </div>
+                      <div style={{ color: "#374151", fontSize: "13px" }}>{dec.motif}</div>
+                      <div style={{ fontSize: "11px", color: "#6b7280", marginTop: "6px" }}>par {dec.par} · {dec.heure} · {dec.date}{idx === lit.decisions.length - 1 && lit.decisions.length > 1 ? " (dernière révision)" : ""}</div>
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -844,50 +488,16 @@ export default function Litiges() {
               <div style={{ marginBottom: "20px" }}>
                 <STitle>Historique du dossier</STitle>
                 {lit.historique.map((h, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      gap: "12px",
-                      marginBottom: "14px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 9,
-                          height: 9,
-                          borderRadius: "50%",
-                          background: "var(--gold)",
-                          border: "2px solid var(--gold-lighter)",
-                          flexShrink: 0,
-                          marginTop: 2,
-                        }}
-                      />
+                  <div key={i} style={{ display: "flex", gap: "12px", marginBottom: "14px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <div style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--gold)", border: "2px solid var(--gold-lighter)", flexShrink: 0, marginTop: 2 }} />
                       {i < lit.historique.length - 1 && (
-                        <div
-                          style={{
-                            width: 1,
-                            flex: 1,
-                            background: "var(--white-3)",
-                            marginTop: 3,
-                          }}
-                        />
+                        <div style={{ width: 1, flex: 1, background: "var(--white-3)", marginTop: 3 }} />
                       )}
                     </div>
                     <div style={{ paddingBottom: "3px" }}>
-                      <div style={{ fontSize: "13px", fontWeight: "500" }}>
-                        {h.action}
-                      </div>
-                      <div style={{ fontSize: "11px", color: "var(--gray)" }}>
-                        par {h.par} · {h.heure} · {h.date}
-                      </div>
+                      <div style={{ fontSize: "13px", fontWeight: "500" }}>{h.action}</div>
+                      <div style={{ fontSize: "11px", color: "var(--gray)" }}>par {h.par} · {h.heure} · {h.date}</div>
                     </div>
                   </div>
                 ))}
@@ -895,89 +505,23 @@ export default function Litiges() {
 
               {/* Note admin */}
               <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <STitle style={{ margin: 0 }}>
-                    Note admin confidentielle
-                  </STitle>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                  <STitle style={{ margin: 0 }}>Note admin confidentielle</STitle>
                   {!showNoteInput && (
-                    <button
-                      onClick={() => setShowNoteInput(true)}
-                      style={{
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        color: "var(--gold-dark)",
-                        padding: "3px 10px",
-                        border: "1px dashed var(--gold)",
-                        borderRadius: "20px",
-                        cursor: "pointer",
-                        background: "rgba(201,169,110,0.05)",
-                      }}
-                    >
+                    <button onClick={() => setShowNoteInput(true)} style={{ fontSize: "11px", fontWeight: "600", color: "var(--gold-dark)", padding: "3px 10px", border: "1px dashed var(--gold)", borderRadius: "20px", cursor: "pointer", background: "rgba(201,169,110,0.05)" }}>
                       + Ajouter
                     </button>
                   )}
                 </div>
-                <div
-                  style={{
-                    background: "#fffbeb",
-                    border: "1px solid #fde68a",
-                    borderRadius: "var(--radius-md)",
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: lit.noteAdmin ? "var(--noir)" : "var(--gray-light)",
-                    fontStyle: lit.noteAdmin ? "normal" : "italic",
-                    whiteSpace: "pre-wrap",
-                    lineHeight: 1.6,
-                    marginBottom: showNoteInput ? "10px" : 0,
-                  }}
-                >
+                <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "var(--radius-md)", padding: "12px 16px", fontSize: "13px", color: lit.noteAdmin ? "var(--noir)" : "var(--gray-light)", fontStyle: lit.noteAdmin ? "normal" : "italic", whiteSpace: "pre-wrap", lineHeight: 1.6, marginBottom: showNoteInput ? "10px" : 0 }}>
                   {lit.noteAdmin || "Aucune note confidentielle."}
                 </div>
                 {showNoteInput && (
                   <div>
-                    <textarea
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      placeholder="Note confidentielle (visible admin seulement)…"
-                      rows={3}
-                      autoFocus
-                      style={{
-                        width: "100%",
-                        padding: "10px 12px",
-                        border: "1.5px solid var(--gold)",
-                        borderRadius: "var(--radius-sm)",
-                        fontSize: "13px",
-                        resize: "none",
-                        outline: "none",
-                        marginBottom: "8px",
-                      }}
-                    />
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          setShowNoteInput(false);
-                          setNoteText("");
-                        }}
-                        style={bStyle("ghost")}
-                      >
-                        Annuler
-                      </button>
-                      <button onClick={ajouterNote} style={bStyle("gold")}>
-                        Enregistrer
-                      </button>
+                    <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Note confidentielle (visible admin seulement)…" rows={3} autoFocus style={{ width: "100%", padding: "10px 12px", border: "1.5px solid var(--gold)", borderRadius: "var(--radius-sm)", fontSize: "13px", resize: "none", outline: "none", marginBottom: "8px" }} />
+                    <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                      <button onClick={() => { setShowNoteInput(false); setNoteText(""); }} style={bStyle("ghost")}>Annuler</button>
+                      <button onClick={ajouterNote} style={bStyle("gold")}>Enregistrer</button>
                     </div>
                   </div>
                 )}
@@ -987,112 +531,99 @@ export default function Litiges() {
         )}
       </div>
 
-      {/* Modal décision */}
+      {/* ✅ POINT 1 — Modal décision refondu : multi-sélection + montant partiel + révision */}
       {showDecisionModal && lit && (
-        <div style={OVL} onClick={() => setShowDecisionModal(false)}>
+        <div style={OVL} onClick={fermerModal}>
           <div style={MDL} onClick={(e) => e.stopPropagation()}>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "28px",
-                fontWeight: "300",
-                marginBottom: "6px",
-              }}
-            >
-              Rendre une décision
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "28px", fontWeight: "300", marginBottom: "6px" }}>
+              {modeRevision ? "Modifier la décision" : "Rendre une décision"}
             </h2>
-            <p
-              style={{
-                fontSize: "13px",
-                color: "var(--gray)",
-                marginBottom: "20px",
-              }}
-            >
+            <p style={{ fontSize: "13px", color: "var(--gray)", marginBottom: "20px" }}>
               {lit.id} · {lit.sujet}
             </p>
-            <div
-              style={{
-                background: "#fef2f2",
-                border: "1px solid #fecaca",
-                borderRadius: "var(--radius-sm)",
-                padding: "10px 14px",
-                fontSize: "12px",
-                color: "#c0392b",
-                marginBottom: "16px",
-              }}
-            >
-              ⚠ Toute décision est définitive, horodatée et enregistrée dans le
-              journal d'audit.
+
+            {/* Avertissement */}
+            <div style={{ background: modeRevision ? "#fffbeb" : "#fef2f2", border: `1px solid ${modeRevision ? "#fde68a" : "#fecaca"}`, borderRadius: "var(--radius-sm)", padding: "10px 14px", fontSize: "12px", color: modeRevision ? "#92400e" : "#c0392b", marginBottom: "16px" }}>
+              {modeRevision
+                ? "✏️ Vous modifiez une décision existante. La révision sera horodatée et ajoutée au journal d'audit."
+                : "⚠ La décision sera horodatée et enregistrée dans le journal d'audit. Elle peut être révisée ultérieurement si nécessaire."}
             </div>
-            <label style={LBL}>Décision *</label>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
-                marginBottom: "14px",
-              }}
-            >
-              {DECISIONS_RAPIDES.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDecisionChoisie(d)}
-                  style={{
-                    textAlign: "left",
-                    padding: "10px 14px",
-                    borderRadius: "var(--radius-sm)",
-                    fontSize: "13px",
-                    border: `1.5px solid ${
-                      decisionChoisie === d ? "var(--gold)" : "var(--white-3)"
-                    }`,
-                    background:
-                      decisionChoisie === d
-                        ? "rgba(201,169,110,0.08)"
-                        : "transparent",
-                    color:
-                      decisionChoisie === d
-                        ? "var(--gold-dark)"
-                        : "var(--noir)",
-                    cursor: "pointer",
-                    fontWeight: decisionChoisie === d ? "600" : "400",
-                  }}
-                >
-                  {d}
-                </button>
-              ))}
+
+            {/* ✅ Multi-sélection via checkboxes */}
+            <label style={LBL}>Décision(s) * <span style={{ fontWeight: "400", textTransform: "none", letterSpacing: 0, color: "var(--gray-light)" }}>(plusieurs choix possibles)</span></label>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "14px" }}>
+              {DECISIONS_RAPIDES.map((d) => {
+                const checked = decisionsModes.includes(d);
+                return (
+                  <button
+                    key={d}
+                    onClick={() => toggleDecision(d)}
+                    style={{
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      borderRadius: "var(--radius-sm)",
+                      fontSize: "13px",
+                      border: `1.5px solid ${checked ? "var(--gold)" : "var(--white-3)"}`,
+                      background: checked ? "rgba(201,169,110,0.08)" : "transparent",
+                      color: checked ? "var(--gold-dark)" : "var(--noir)",
+                      cursor: "pointer",
+                      fontWeight: checked ? "600" : "400",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    {/* Checkbox visuelle */}
+                    <span style={{ width: 16, height: 16, borderRadius: "4px", border: `2px solid ${checked ? "var(--gold)" : "var(--white-3)"}`, background: checked ? "var(--gold)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.15s" }}>
+                      {checked && <span style={{ color: "#fff", fontSize: "10px", fontWeight: "800" }}>✓</span>}
+                    </span>
+                    {d}
+                  </button>
+                );
+              })}
             </div>
-            <label style={LBL}>Motif de la décision *</label>
+
+            {/* ✅ POINT 1.2 — Champ montant si remboursement partiel coché */}
+            {needsMontant && (
+              <div style={{ marginBottom: "14px", animation: "fadeIn 0.2s ease" }}>
+                <label style={LBL}>Montant du remboursement partiel (€) *</label>
+                <input
+                  type="number"
+                  min="0"
+                  max={lit.montant}
+                  value={montantPartiel}
+                  onChange={(e) => setMontantPartiel(e.target.value)}
+                  placeholder={`Max. ${lit.montant}€`}
+                  autoFocus
+                  style={{ width: "100%", padding: "10px 12px", border: "1.5px solid var(--gold)", borderRadius: "var(--radius-sm)", fontSize: "14px", fontWeight: "600", outline: "none", color: "var(--noir)" }}
+                />
+                <div style={{ fontSize: "11px", color: "var(--gray)", marginTop: "4px" }}>
+                  Montant total de la commande : {lit.montant}€
+                </div>
+              </div>
+            )}
+
+            {/* Motif / précisions */}
+            <label style={LBL}>Motif et précisions *</label>
             <textarea
               value={decisionMotif}
               onChange={(e) => setDecisionMotif(e.target.value)}
               placeholder="Justification détaillée de la décision…"
               rows={4}
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1.5px solid var(--white-3)",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "13px",
-                resize: "none",
-                outline: "none",
-                marginBottom: "20px",
-              }}
+              style={{ width: "100%", padding: "10px 12px", border: "1.5px solid var(--white-3)", borderRadius: "var(--radius-sm)", fontSize: "13px", resize: "none", outline: "none", marginBottom: "20px" }}
             />
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                onClick={() => setShowDecisionModal(false)}
-                style={bStyle("ghost")}
-              >
-                Annuler
-              </button>
+
+            {/* Récap sélection */}
+            {decisionsModes.length > 0 && (
+              <div style={{ background: "rgba(201,169,110,0.06)", border: "1px solid var(--gold-lighter)", borderRadius: "var(--radius-sm)", padding: "10px 14px", marginBottom: "16px", fontSize: "12px", color: "var(--noir)" }}>
+                <strong style={{ color: "var(--gold-dark)" }}>Récap :</strong> {decisionsModes.join(" + ")}{needsMontant && montantPartiel ? ` — ${montantPartiel}€` : ""}
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <button onClick={fermerModal} style={bStyle("ghost")}>Annuler</button>
               <button onClick={appliquerDecision} style={bStyle("gold")}>
-                Valider la décision
+                {modeRevision ? "Valider la révision" : "Valider la décision"}
               </button>
             </div>
           </div>
@@ -1104,59 +635,23 @@ export default function Litiges() {
 
 function STitle({ children, style }) {
   return (
-    <div
-      style={{
-        fontSize: "10px",
-        fontWeight: "700",
-        letterSpacing: "0.12em",
-        textTransform: "uppercase",
-        color: "var(--gray)",
-        marginBottom: "10px",
-        ...style,
-      }}
-    >
+    <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gray)", marginBottom: "10px", ...style }}>
       {children}
     </div>
   );
 }
 function IBox({ children }) {
   return (
-    <div
-      style={{
-        background: "var(--gray-bg)",
-        borderRadius: "var(--radius-md)",
-        padding: "14px 18px",
-        border: "1px solid var(--white-3)",
-      }}
-    >
+    <div style={{ background: "var(--gray-bg)", borderRadius: "var(--radius-md)", padding: "14px 18px", border: "1px solid var(--white-3)" }}>
       {children}
     </div>
   );
 }
 function IRow({ label, val, bold, mono }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: "7px",
-        gap: "12px",
-      }}
-    >
-      <span style={{ fontSize: "12px", color: "var(--gray)", flexShrink: 0 }}>
-        {label}
-      </span>
-      <span
-        style={{
-          fontSize: "12px",
-          fontWeight: bold ? "700" : "500",
-          textAlign: "right",
-          fontFamily: mono ? "monospace" : "inherit",
-          color: bold ? "var(--noir)" : "inherit",
-        }}
-      >
-        {val}
-      </span>
+    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "7px", gap: "12px" }}>
+      <span style={{ fontSize: "12px", color: "var(--gray)", flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: "12px", fontWeight: bold ? "700" : "500", textAlign: "right", fontFamily: mono ? "monospace" : "inherit", color: bold ? "var(--noir)" : "inherit" }}>{val}</span>
     </div>
   );
 }
@@ -1175,51 +670,22 @@ function fBtn(active, color, bg) {
 function bStyle(t) {
   const s = {
     gold: { background: "var(--noir)", color: "var(--gold)", border: "none" },
-    ghost: {
-      background: "transparent",
-      color: "var(--gray)",
-      border: "1.5px solid var(--white-3)",
-    },
+    ghost: { background: "transparent", color: "var(--gray)", border: "1.5px solid var(--white-3)" },
+    revision: { background: "transparent", color: "#185fa5", border: "1.5px solid #185fa5" },
   };
-  return {
-    padding: "9px 16px",
-    borderRadius: "var(--radius-sm)",
-    fontSize: "12px",
-    fontWeight: "600",
-    cursor: "pointer",
-    ...s[t],
-  };
+  return { padding: "9px 16px", borderRadius: "var(--radius-sm)", fontSize: "12px", fontWeight: "600", cursor: "pointer", ...s[t] };
 }
 const OVL = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(10,10,15,0.55)",
-  zIndex: 200,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  position: "fixed", inset: 0, background: "rgba(10,10,15,0.55)", zIndex: 200,
+  display: "flex", alignItems: "center", justifyContent: "center",
 };
 const MDL = {
-  background: "#fff",
-  borderRadius: "var(--radius-lg)",
-  padding: "32px",
-  width: "520px",
-  boxShadow: "var(--shadow-lg)",
-  maxHeight: "90vh",
-  overflowY: "auto",
+  background: "#fff", borderRadius: "var(--radius-lg)", padding: "32px",
+  width: "540px", boxShadow: "var(--shadow-lg)", maxHeight: "90vh", overflowY: "auto",
 };
 const LBL = {
-  display: "block",
-  fontSize: "11px",
-  fontWeight: "700",
-  letterSpacing: "0.1em",
-  textTransform: "uppercase",
-  color: "var(--gray)",
-  marginBottom: "8px",
+  display: "block", fontSize: "11px", fontWeight: "700", letterSpacing: "0.1em",
+  textTransform: "uppercase", color: "var(--gray)", marginBottom: "8px",
 };
-const now = () =>
-  new Date().toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+const now = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 const today = () => new Date().toLocaleDateString("fr-FR");
