@@ -9,6 +9,8 @@ import {
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { DemandesProvider } from "./context/DemandesContext";
+// ✅ POINT 4 — import MessagerieProvider
+import { MessagerieProvider } from "./context/MessagerieContext";
 import { useRole } from "./hooks/useRole";
 import "./index.css";
 
@@ -160,71 +162,73 @@ const PRR = ({ page, children }) => (
   </PrivateRoute>
 );
 
-
-
 export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <DemandesProvider>
-          <Router>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  fontFamily: "DM Sans, sans-serif",
-                  fontSize: "14px",
-                  borderRadius: "12px",
-                  zIndex: 9999,
-                },
-              }}
-            />
-            <Routes>
-              {/* Pages publiques */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/tutorial" element={<TutorialAdmin />} />
+          {/* ✅ POINT 4 — MessagerieProvider wrappé ici pour partager l'état
+              entre Boutiques.js et Messagerie.js */}
+          <MessagerieProvider>
+            <Router>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  style: {
+                    fontFamily: "DM Sans, sans-serif",
+                    fontSize: "14px",
+                    borderRadius: "12px",
+                    zIndex: 9999,
+                  },
+                }}
+              />
+              <Routes>
+                {/* Pages publiques */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/tutorial" element={<TutorialAdmin />} />
 
-              {/* Pages accessibles à tous les rôles */}
-              <Route path="/" element={<PR><Dashboard /></PR>} />
-              <Route path="/statistiques" element={<PR><Stats /></PR>} />
-              <Route path="/boutiques" element={<PR><Boutiques /></PR>} />
-              <Route path="/messagerie" element={<PRR page="messagerie"><Messagerie /></PRR>} />
-              <Route path="/produits" element={<PR><Produits /></PR>} />
-              <Route path="/categories" element={<PR><CategoriesAdmin /></PR>} />
-              <Route path="/commandes" element={<PR><Commandes /></PR>} />
-              <Route path="/livraisons" element={<PR><Livraisons /></PR>} />
-              <Route path="/retours" element={<PR><Retours /></PR>} />
-              <Route path="/sav" element={<PR><SAV /></PR>} />
-              <Route path="/historique-reclamations" element={<PR><HistoriqueReclamations /></PR>} />
-              <Route path="/moderation" element={<PR><Moderation /></PR>} />
-              <Route path="/avis" element={<PR><Avis /></PR>} />
+                {/* Pages accessibles à tous les rôles */}
+                <Route path="/" element={<PR><Dashboard /></PR>} />
+                <Route path="/statistiques" element={<PR><Stats /></PR>} />
+                <Route path="/boutiques" element={<PR><Boutiques /></PR>} />
+                <Route path="/messagerie" element={<PRR page="messagerie"><Messagerie /></PRR>} />
+                <Route path="/produits" element={<PR><Produits /></PR>} />
+                <Route path="/categories" element={<PR><CategoriesAdmin /></PR>} />
+                <Route path="/commandes" element={<PR><Commandes /></PR>} />
+                <Route path="/livraisons" element={<PR><Livraisons /></PR>} />
+                <Route path="/retours" element={<PR><Retours /></PR>} />
+                <Route path="/sav" element={<PR><SAV /></PR>} />
+                <Route path="/historique-reclamations" element={<PR><HistoriqueReclamations /></PR>} />
+                <Route path="/moderation" element={<PR><Moderation /></PR>} />
+                <Route path="/avis" element={<PR><Avis /></PR>} />
 
-              {/* Pages SAV uniquement (pas Ops) */}
-              <Route path="/clients" element={<PRR page="clients"><Clients /></PRR>} />
-              <Route path="/parrainage" element={<PRR page="parrainage"><Parrainage /></PRR>} />
+                {/* Pages SAV uniquement (pas Ops) */}
+                <Route path="/clients" element={<PRR page="clients"><Clients /></PRR>} />
+                <Route path="/parrainage" element={<PRR page="parrainage"><Parrainage /></PRR>} />
 
-              {/* Pages Admin uniquement */}
-              <Route path="/invitations" element={<PRR page="invitations"><Invitations /></PRR>} />
-              <Route path="/onboarding" element={<PRR page="onboarding"><OnboardingAdmin /></PRR>} />
-              <Route path="/abonnements" element={<PRR page="abonnements"><Abonnements /></PRR>} />
-              <Route path="/finance" element={<PRR page="finance"><Finance /></PRR>} />
-              <Route path="/remboursements" element={<PRR page="remboursements"><Remboursements /></PRR>} />
-              <Route path="/facturation" element={<PRR page="facturation"><Facturation /></PRR>} />
-              <Route path="/reporting" element={<PRR page="reporting"><Reporting /></PRR>} />
-              <Route path="/litiges" element={<PRR page="litiges"><Litiges /></PRR>} />
-              <Route path="/parametres" element={<PRR page="parametres"><Parametres /></PRR>} />
-              <Route path="/zones" element={<PRR page="zones"><ZoneService /></PRR>} />
-              <Route path="/notifications" element={<PRR page="notifications"><Notifications /></PRR>} />
-              <Route path="/integrations" element={<PRR page="integrations"><Integrations /></PRR>} />
-              <Route path="/audit" element={<PRR page="audit"><AuditLog /></PRR>} />
-              <Route path="/comptes" element={<PRR page="comptes"><Comptes /></PRR>} />
-              <Route path="/activite" element={<PRR page="activite"><Activite /></PRR>} />
-              <Route path="/coupons" element={<PRR page="coupons"><Coupons /></PRR>} />
+                {/* Pages Admin uniquement */}
+                <Route path="/invitations" element={<PRR page="invitations"><Invitations /></PRR>} />
+                <Route path="/onboarding" element={<PRR page="onboarding"><OnboardingAdmin /></PRR>} />
+                <Route path="/abonnements" element={<PRR page="abonnements"><Abonnements /></PRR>} />
+                <Route path="/finance" element={<PRR page="finance"><Finance /></PRR>} />
+                <Route path="/remboursements" element={<PRR page="remboursements"><Remboursements /></PRR>} />
+                <Route path="/facturation" element={<PRR page="facturation"><Facturation /></PRR>} />
+                <Route path="/reporting" element={<PRR page="reporting"><Reporting /></PRR>} />
+                <Route path="/litiges" element={<PRR page="litiges"><Litiges /></PRR>} />
+                <Route path="/parametres" element={<PRR page="parametres"><Parametres /></PRR>} />
+                <Route path="/zones" element={<PRR page="zones"><ZoneService /></PRR>} />
+                <Route path="/notifications" element={<PRR page="notifications"><Notifications /></PRR>} />
+                <Route path="/integrations" element={<PRR page="integrations"><Integrations /></PRR>} />
+                <Route path="/audit" element={<PRR page="audit"><AuditLog /></PRR>} />
+                <Route path="/comptes" element={<PRR page="comptes"><Comptes /></PRR>} />
+                <Route path="/activite" element={<PRR page="activite"><Activite /></PRR>} />
+                <Route path="/coupons" element={<PRR page="coupons"><Coupons /></PRR>} />
 
-              {/* 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Router>
+                {/* 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
+          </MessagerieProvider>
         </DemandesProvider>
       </AuthProvider>
     </ThemeProvider>
