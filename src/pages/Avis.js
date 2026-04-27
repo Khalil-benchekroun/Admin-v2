@@ -831,7 +831,7 @@ export default function Avis() {
                       marginBottom: "8px",
                     }}
                   >
-                    Réponse boutique
+                    Réponse LIVRR
                   </div>
                   <div
                     style={{
@@ -862,7 +862,7 @@ export default function Avis() {
                       marginBottom: "8px",
                     }}
                   >
-                    Répondre au nom de la boutique
+                    Répondre au nom de LIVRR
                   </div>
                   {!showReponse ? (
                     <button
@@ -886,7 +886,7 @@ export default function Avis() {
                       <textarea
                         value={reponseText}
                         onChange={(e) => setReponseText(e.target.value)}
-                        placeholder="Réponse au nom de la boutique…"
+                        placeholder="Réponse officielle LIVRR…"
                         rows={4}
                         autoFocus
                         style={{
