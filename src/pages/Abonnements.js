@@ -582,7 +582,7 @@ export default function Abonnements() {
                     marginTop: "2px",
                   }}
                 >
-                  +{plan.droits.length - 3} autres droits…
+                  {(() => { const n = plan.droits.length - 3; return `+${n} autre${n > 1 ? "s" : ""} droit${n > 1 ? "s" : ""}…`; })()}
                 </div>
               )}
             </div>
