@@ -70,11 +70,11 @@ const MENU = [
     label: "Support & SAV",
     roles: [],
     subItems: [
-      { path: "/sav",                     label: "Tickets",                   roles: [],       badge: 3 },
-      { path: "/litiges",                 label: "Litiges & arbitrage",       roles: ["admin"] },
-      { path: "/historique-reclamations", label: "Historique réclamations",   roles: [] },
-      { path: "/moderation",              label: "Modération",                roles: [] },
-      { path: "/avis",                    label: "Avis clients",              roles: [] },
+      { path: "/sav",                     label: "Tickets",                 roles: [],       badge: 3 },
+      { path: "/litiges",                 label: "Litiges & arbitrage",     roles: ["admin"] },
+      { path: "/historique-reclamations", label: "Historique réclamations", roles: [] },
+      { path: "/moderation",              label: "Modération",              roles: [] },
+      { path: "/avis",                    label: "Avis clients",            roles: [] },
     ],
   },
   {
@@ -161,13 +161,20 @@ export default function Sidebar({ onSearchClick, onDemoClick }) {
       <div style={{ width:"240px", height:"100vh", background:"#0A0A0F", color:"#fff", position:"fixed", display:"flex", flexDirection:"column", zIndex:100, borderRight:"1px solid rgba(255,255,255,0.05)", animation:mounted?"sidebarFade 0.6s ease forwards":"none" }}>
 
         {/* LOGO */}
-        <div style={{ padding:"20px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.05)", display:"flex", flexDirection:"column", alignItems:"center" }}>
-          <img
-            src="/livrr-logo.svg"
-            alt="LIVRR"
-            style={{ height:"90px", width:"auto", display:"block", marginBottom:"8px" }}
-          />
-          <div style={{ fontSize:"9px", color:"rgba(255,255,255,0.2)", letterSpacing:"3px", textTransform:"uppercase" }}>Espace Admin</div>
+        <div style={{ padding:"16px 0 12px", borderBottom:"1px solid rgba(255,255,255,0.05)", display:"flex", flexDirection:"column", alignItems:"center" }}>
+          <div style={{ width:"200px", height:"120px", overflow:"hidden", display:"flex", alignItems:"flex-start", justifyContent:"center" }}>
+            <img
+              src="/livrr-logo.svg"
+              alt="LIVRR"
+              style={{
+                width:"200px",
+                height:"auto",
+                marginTop:"-10px",
+                display:"block"
+              }}
+            />
+          </div>
+          <div style={{ fontSize:"9px", color:"rgba(255,255,255,0.2)", letterSpacing:"3px", textTransform:"uppercase", marginTop:"4px" }}>Espace Admin</div>
         </div>
 
         {/* PROFIL */}
