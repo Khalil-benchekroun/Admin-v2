@@ -70,11 +70,11 @@ const MENU = [
     label: "Support & SAV",
     roles: [],
     subItems: [
-      { path: "/sav",                  label: "Tickets",                 roles: [],         badge: 3 },
-      { path: "/litiges",              label: "Litiges & arbitrage",     roles: ["admin"] },
-      { path: "/historique-reclamations", label: "Historique réclamations", roles: [] },
-      { path: "/moderation",           label: "Modération",              roles: [] },
-      { path: "/avis",                 label: "Avis clients",            roles: [] },
+      { path: "/sav",                     label: "Tickets",                   roles: [],       badge: 3 },
+      { path: "/litiges",                 label: "Litiges & arbitrage",       roles: ["admin"] },
+      { path: "/historique-reclamations", label: "Historique réclamations",   roles: [] },
+      { path: "/moderation",              label: "Modération",                roles: [] },
+      { path: "/avis",                    label: "Avis clients",              roles: [] },
     ],
   },
   {
@@ -89,16 +89,16 @@ const MENU = [
       { path: "/audit",         label: "Journal d'audit",     roles: ["admin"] },
       { path: "/activite",      label: "Activité équipe",     roles: ["admin"] },
       { path: "/comptes",       label: "Comptes admin / SAV", roles: ["admin"] },
-      { path: "/tutorial",      label: "Guide d'utilisation",  roles: [] },
+      { path: "/tutorial",      label: "Guide d'utilisation", roles: [] },
     ],
   },
 ];
 
 const ROLE_CONFIG = {
-  superadmin: { label: "Super Admin",     color: "var(--gold)",  dot: "#C9A96E" },
-  admin:      { label: "Admin Plateforme",color: "#8B5CF6",      dot: "#8B5CF6" },
-  sav:        { label: "SAV / Support",   color: "#3B82F6",      dot: "#3B82F6" },
-  ops:        { label: "Ops / Modération",color: "#10B981",      dot: "#10B981" },
+  superadmin: { label: "Super Admin",      color: "var(--gold)", dot: "#C9A96E" },
+  admin:      { label: "Admin Plateforme", color: "#8B5CF6",     dot: "#8B5CF6" },
+  sav:        { label: "SAV / Support",    color: "#3B82F6",     dot: "#3B82F6" },
+  ops:        { label: "Ops / Modération", color: "#10B981",     dot: "#10B981" },
 };
 
 function peutAcceder(roles, role) {
@@ -118,7 +118,6 @@ export default function Sidebar({ onSearchClick, onDemoClick }) {
   const demandesClient = demandesEnAttente.filter((d) => d.type === "blocage_client").length;
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
 
-  // superadmin sees same menu as admin
   const menuRole = (role === "superadmin") ? "admin" : role;
   const menuVisible = MENU
     .filter((g) => peutAcceder(g.roles, menuRole))
@@ -162,8 +161,12 @@ export default function Sidebar({ onSearchClick, onDemoClick }) {
       <div style={{ width:"240px", height:"100vh", background:"#0A0A0F", color:"#fff", position:"fixed", display:"flex", flexDirection:"column", zIndex:100, borderRight:"1px solid rgba(255,255,255,0.05)", animation:mounted?"sidebarFade 0.6s ease forwards":"none" }}>
 
         {/* LOGO */}
-        <div style={{ padding:"32px 24px 24px", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
-          <div className="livrr-logo" style={{ fontFamily:"var(--font-display)", fontSize:"22px", letterSpacing:"7px", fontWeight:"400", marginBottom:"4px" }}>LIVRR</div>
+        <div style={{ padding:"20px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.05)", display:"flex", flexDirection:"column", alignItems:"center" }}>
+          <img
+            src="/livrr-logo.svg"
+            alt="LIVRR"
+            style={{ height:"90px", width:"auto", display:"block", marginBottom:"8px" }}
+          />
           <div style={{ fontSize:"9px", color:"rgba(255,255,255,0.2)", letterSpacing:"3px", textTransform:"uppercase" }}>Espace Admin</div>
         </div>
 
@@ -192,7 +195,7 @@ export default function Sidebar({ onSearchClick, onDemoClick }) {
           )}
         </div>
 
-        {/* SEARCH + DEMO */}
+        {/* SEARCH */}
         <div style={{ padding:"10px 16px", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
           <button
             onClick={onSearchClick}
